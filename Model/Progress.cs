@@ -9,6 +9,7 @@ namespace Backend.Model
 
         [StringLength(40)]
         public string Name { get; set; }
+
         public int Order { get; set; }
         public int ProjectId { get; set; }
 

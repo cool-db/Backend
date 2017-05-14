@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Model
 {
@@ -8,6 +9,8 @@ namespace Backend.Model
         public int TaskId { get; set; }
         public int UserId { get; set; }
         public DateTime Time { get; set; }
+
+        [StringLength(80)]
         public string Content { get; set; }
 
         public virtual User Task { get; set; }
