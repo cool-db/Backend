@@ -6,25 +6,25 @@ namespace Backend.Model
 {
     public class User
     {
-        public int UserId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public string Email { get; set; }
 
-//        [Required]
+        [Required]
         public string Password { get; set; }
 
         [StringLength(200)]
         public string Address { get; set; }
 
-//        [Required]
+        [Required]
         public string Name { get; set; }
 
-//        [Required]
+        [Required]
         public Boolean Gender { get; set; }
 
         [StringLength(30)]
-        public string[] Phonenumbers { get; set; }
+        public string Phonenumbers { get; set; }
 
         [StringLength(40)]
         public string Job { get; set; }

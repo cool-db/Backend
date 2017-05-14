@@ -11,10 +11,25 @@ namespace Backend.Biz
             {
                 var user = new User()
                 {
-
+                    Email = "xt@xt.cn",
+                    Password = "xt",
+                    Address = "4-201@SHIT",
+                    Name = "xt",
+                    Gender = false,
+                    Job = "Mogician",
+                    Website = "xt.cn",
+                    Birthday = DateTime.Now
                 };
                 context.Users.Add(user);
-                context.SaveChanges();
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
                 return "Success";
             }
         }

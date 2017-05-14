@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
+using System.Data.Entity.Validation;
 
 namespace Backend.Model
 {
@@ -12,6 +14,27 @@ namespace Backend.Model
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("BACKEND");
+        }
+        public override int SaveChanges()
+        {
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    Console.WriteLine("\nEntity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage);
+                    }
+                }
+                throw;
+            }
         }
 
         public DbSet<Attachment>           Attachments { get; set; }

@@ -7,15 +7,15 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
-//        [StringLength(100)]
+        [StringLength(100)]
         public string Content { get; set; }
 
         public DateTime Time { get; set; }
 
-//        [Required]
+        [Required]
         public int UserId { get; set; }
 
-//        [Required]
+        [Required]
         public int TaskId { get; set; }
 
         public virtual User User { get; set; }
