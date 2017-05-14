@@ -7,9 +7,9 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
-        [Required]
+//        [Required]
         public int UserId { get; set; }
-        [Required]
+//        [Required]
         public int ScheduleId { get; set; }
 
         public virtual User User { get; set; }

@@ -7,14 +7,14 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
-        [StringLength(80)]
+//        [StringLength(80)]
         public string Content { get; set; }
 
         public Boolean State { get; set; }
 
-        [Required]
+//        [Required]
         public int ExecutorId { get; set; }
-        [Required]
+//        [Required]
         public int TaskId { get; set; }
 
         public virtual User Executor { get; set; }

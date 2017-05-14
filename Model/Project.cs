@@ -7,13 +7,13 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
-        [StringLength(40)]
+//        [StringLength(40)]
         public string Name { get; set; }
 
-        [StringLength(200)]
+//        [StringLength(200)]
         public string Discription { get; set; }
 
-        [Required]
+//        [Required]
         public int OnwerId { get; set; }
 
         public virtual User Onwer { get; set; }

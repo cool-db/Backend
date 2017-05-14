@@ -7,7 +7,7 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
-        [StringLength(40)]
+//        [StringLength(40)]
         public string Name { get; set; }
 
         //todo
@@ -16,10 +16,10 @@ namespace Backend.Model
         [Required]
         public DateTime UploadTime { get; set; }
 
-        [Required]
+//        [Required]
         public int UploaderId { get; set; }
 
-        [Required]
+//        [Required]
         public int ProjectId { get; set; }
 
         public virtual User UpLoader { get; set; }

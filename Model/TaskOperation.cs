@@ -10,7 +10,7 @@ namespace Backend.Model
         public int UserId { get; set; }
         public DateTime Time { get; set; }
 
-        [StringLength(80)]
+//        [StringLength(80)]
         public string Content { get; set; }
 
         public virtual User Task { get; set; }

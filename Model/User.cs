@@ -10,15 +10,15 @@ namespace Backend.Model
 
         public string Email { get; set; }
 
-        [Required]
+//        [Required]
         public string Password { get; set; }
 
         public string Address { get; set; }
 
-        [Required]
+//        [Required]
         public string Name { get; set; }
 
-        [Required]
+//        [Required]
         public Boolean Gender { get; set; }
 
         public string[] Phonenumbers { get; set; }
