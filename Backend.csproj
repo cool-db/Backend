@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -77,9 +77,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\FileController.cs" />
+    <Compile Include="Controller\ProjectController.cs" />
+    <Compile Include="Controller\ScheduleController.cs" />
+    <Compile Include="Controller\TaskController.cs" />
+    <Compile Include="Controller\UserController.cs" />
     <Compile Include="Global.asax.cs">
-        <DependentUpon>Global.asax</DependentUpon>
+      <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Model\Attachmentcs.cs" />
+    <Compile Include="Model\BackendContext.cs" />
+    <Compile Include="Model\Comment.cs" />
+    <Compile Include="Model\File.cs" />
+    <Compile Include="Model\Progress.cs" />
+    <Compile Include="Model\Project.cs" />
+    <Compile Include="Model\ProjectOperation.cs" />
+    <Compile Include="Model\ProjectUser.cs" />
+    <Compile Include="Model\Schedule.cs" />
+    <Compile Include="Model\ScheduleUser.cs" />
+    <Compile Include="Model\Subtask.cs" />
+    <Compile Include="Model\Task.cs" />
+    <Compile Include="Model\TaskMember.cs" />
+    <Compile Include="Model\TaskOperation.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="Sample\Biz\SampleBiz.cs" />
     <Compile Include="Sample\Controller\SampleController.cs" />
     <Compile Include="Sample\Model\SampleContext.cs" />
