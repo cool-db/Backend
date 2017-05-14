@@ -4,7 +4,7 @@ namespace Backend.Model
 {
     public class Schedule
     {
-        public int ScheduleId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Content { get; set; }
         public DateTime StartTime { get; set; }
@@ -14,5 +14,8 @@ namespace Backend.Model
         public string Location { get; set; }
         public int CreatorId { get; set; }
         public int ProjectId { get; set; }
+
+        public virtual User Creator { get; set; }
+        public virtual Project Project { get; set; }
     }
 }

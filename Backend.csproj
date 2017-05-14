@@ -77,15 +77,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Biz\DebugModelBiz.cs" />
     <Compile Include="Controller\FileController.cs" />
     <Compile Include="Controller\ProjectController.cs" />
     <Compile Include="Controller\ScheduleController.cs" />
     <Compile Include="Controller\TaskController.cs" />
+    <Compile Include="Controller\DebugModelController.cs" />
     <Compile Include="Controller\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Model\Attachmentcs.cs" />
+    <Compile Include="Model\Attachment.cs" />
     <Compile Include="Model\BackendContext.cs" />
     <Compile Include="Model\Comment.cs" />
     <Compile Include="Model\File.cs" />

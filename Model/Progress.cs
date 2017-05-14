@@ -8,5 +8,7 @@ namespace Backend.Model
         public string Name { get; set; }
         public int Order { get; set; }
         public int ProjectId { get; set; }
+
+        public virtual Project Project { get; set; }
     }
 }
