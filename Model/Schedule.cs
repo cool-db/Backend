@@ -14,6 +14,7 @@ namespace Backend.Model
         [Required]
         public DateTime StartTime { get; set; }
 
+
         public DateTime EndTime { get; set; }
         public Boolean RepeatDaily { get; set; }
         public Boolean RepeatWeekly { get; set; }

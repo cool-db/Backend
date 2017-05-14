@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Model
 {
@@ -6,7 +7,9 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
+        [Required]
         public int FileId { get; set; }
+
 
         public int TaskId { get; set; }
 
