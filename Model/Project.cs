@@ -7,16 +7,15 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
-        [StringLength(40)]
+        [Required]
+        [StringLength(20)]
         public string Name { get; set; }
 
-        [StringLength(200)]
+        [Required]
+        [StringLength(100)]
         public string Discription { get; set; }
 
-        [Required]
         public int OwnerId { get; set; }
-
         public virtual User Owner { get; set; }
-
     }
 }

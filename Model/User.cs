@@ -9,29 +9,31 @@ namespace Backend.Model
         public int Id { get; set; }
 
         [Required]
+        [StringLength(20)]
         public string Email { get; set; }
 
         [Required]
+        [StringLength(20)]
         public string Password { get; set; }
 
-        [StringLength(200)]
+        [Required]
+        [StringLength(20)]
+        public string Name { get; set; }
+        
+        [StringLength(40)]
         public string Address { get; set; }
 
-        [Required]
-        public string Name { get; set; }
+        public bool? Gender { get; set; }
 
-        [Required]
-        public Boolean Gender { get; set; }
+        [StringLength(20)]
+        public string Phonenumber { get; set; }
 
-        [StringLength(30)]
-        public string Phonenumbers { get; set; }
-
-        [StringLength(40)]
+        [StringLength(20)]
         public string Job { get; set; }
 
-        [StringLength(40)]
+        [StringLength(20)]
         public string Website { get; set; }
 
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
     }
 }

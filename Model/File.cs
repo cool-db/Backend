@@ -7,21 +7,16 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
+        [Required]
         [StringLength(40)]
         public string Name { get; set; }
 
-        //todo
-        public string Content { get; set; }
+        public byte[] Content { get; set; }
 
-        [Required]
         public DateTime UploadTime { get; set; }
 
-        [Required]
         public int UploaderId { get; set; }
-
-        [Required]
         public int ProjectId { get; set; }
-
         public virtual User UpLoader { get; set; }
         public virtual Project Project { get; set; }
     }
