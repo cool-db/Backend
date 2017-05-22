@@ -7,6 +7,7 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
+        [Required]
         public int Permission { get; set; }
         
         public int UserId { get; set; }

@@ -13,6 +13,7 @@ namespace Backend.Model
 
         public DateTime Time { get; set; }
 
+
         public int UserId { get; set; }
         public int TaskId { get; set; }
 

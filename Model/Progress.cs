@@ -13,6 +13,7 @@ namespace Backend.Model
 
         public int Order { get; set; }
 
+        [Required]
         public int ProjectId { get; set; }
         public virtual Project Project { get; set; }
     }
