@@ -13,6 +13,7 @@ namespace Backend.Biz
                 {
                     Email = "xt@xt.cn",
                     Password = "xt",
+                    Token = "xt",
                     Address = "4-201@SHIT",
                     Name = "xt",
                     Gender = false,

@@ -8,7 +8,7 @@ namespace Backend.Model
     {
         public BackendContext() : base("Backend")
         {
-            Database.SetInitializer(new DropCreateDatabaseAlways<BackendContext>());
+            Database.SetInitializer(new CreateDatabaseIfNotExists<BackendContext>());
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -6,7 +6,7 @@ namespace Backend.Sample.Biz
 {
     public static class SampleBiz
     {
-        public static Object GetFromSampleDb()
+        public static object GetFromSampleDb()
         {
             using (var context = new SampleContext())
             {

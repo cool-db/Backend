@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Net.Cache;
 
 namespace Backend.Model
@@ -16,7 +17,10 @@ namespace Backend.Model
         [StringLength(20)]
         public string Password { get; set; }
 
-        [Required]
+        [StringLength(20)]
+        [Index(IsUnique=true)]
+        public string Token { get; set; }
+        
         [StringLength(20)]
         public string Name { get; set; }
         
