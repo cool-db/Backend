@@ -23,6 +23,8 @@ namespace Backend.Biz
                     //todo
                 });
 
+                context.SaveChanges();
+
                //todo query
                 var response = "success";
 
