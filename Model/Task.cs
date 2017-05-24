@@ -19,8 +19,12 @@ namespace Backend.Model
 
         public bool State { get; set; }
 
+        [Required]
         public int ProgressId { get; set; }
+
+
         public int ExecutorId { get; set; }
+
         public virtual Progress Progress { get; set; }
         public virtual User Executor { get; set; }
     }
