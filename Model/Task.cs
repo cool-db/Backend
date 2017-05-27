@@ -1,31 +1,41 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace Backend.Model
 {
     public class Task
     {
+        public Task()
+        {
+            Users = new List<User>();
+            Comments = new List<Comment>();
+            Subtasks = new List<Subtask>();
+            TaskOperations = new List<TaskOperation>();
+        }
+        
         public int Id { get; set; }
 
         [Required]
-        [StringLength(20)]
+        [MaxLength(20)]
         public string Name { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [MaxLength(100)]
         public string Content { get; set; }
 
         public DateTime Ddl { get; set; }
 
         public bool State { get; set; }
-
-        [Required]
+        
         public int ProgressId { get; set; }
-
-
-        public int ExecutorId { get; set; }
-
         public virtual Progress Progress { get; set; }
-        public virtual User Executor { get; set; }
+
+        public virtual ICollection<User> Users{ get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Subtask> Subtasks { get; set; }
+        public virtual ICollection<TaskOperation> TaskOperations { get; set; }
     }
 }
