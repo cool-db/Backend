@@ -10,12 +10,13 @@ namespace Backend.Model
         public DateTime Time { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [MaxLength(100)]
         public string Content { get; set; }
 
         public int TaskId { get; set; }
         public int UserId { get; set; }
-        public virtual User Task { get; set; }
+        
         public virtual User User { get; set; }
+        public virtual Task Task { get; set; }
     }
 }

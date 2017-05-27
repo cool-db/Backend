@@ -5,10 +5,12 @@ namespace Backend.Model
 {
     public class Comment
     {
+      
+        
         public int Id { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [MaxLength(100)]
         public string Content { get; set; }
 
         public DateTime Time { get; set; }

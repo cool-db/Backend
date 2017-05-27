@@ -1,18 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Model
 {
     public class Schedule
     {
+        public Schedule()
+        {
+            Users = new List<User>();
+        }
+        
         public int Id { get; set; }
 
         [Required]
-        [StringLength(20)]
+        [MaxLength(20)]
         public string Name { get; set; }
         
         [Required]
-        [StringLength(100)]
+        [MaxLength(100)]
         public string Content { get; set; }
         
         public DateTime StartTime { get; set; }
@@ -23,12 +29,15 @@ namespace Backend.Model
         
         public bool RepeatWeekly { get; set; }
 
-        [StringLength(40)]
+        [MaxLength(40)]
         public string Location { get; set; }
 
-        public int CreatorId { get; set; }
+        //public int UserId { get; set; }
         public int ProjectId { get; set; }
-        public virtual User Creator { get; set; }
+        
+        //public virtual User User { get; set; }
         public virtual Project Project { get; set; }
+        public virtual ICollection<User> Users { get; set; }
+
     }
 }
