@@ -49,5 +49,6 @@ namespace Backend.Model
         public DbSet<Task> Tasks { get; set; }
         public DbSet<TaskOperation> TaskOperations { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet UserInfoes { get; set; } 
     }
 }
