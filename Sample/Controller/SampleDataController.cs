@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Web;
 using System.Web.Http;
-using System.Web.Routing;
 using Backend.Sample.Biz;
 
 namespace Backend.Sample.Controller
 {
-    public class SampleController : ApiController
+    public class SampleDataController : ApiController
     {
         [HttpGet]
         public object Get()
         {
-            return SampleBiz.GetFromSampleDb();
+            return SampleDataBiz.GetFromSampleDb();
         }
     }
 }

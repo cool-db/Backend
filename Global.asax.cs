@@ -12,6 +12,8 @@ namespace Backend
 
         public static void Register(HttpConfiguration config)
         {
+            config.Formatters.XmlFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("multipart/form-data"));
+            config.Formatters.XmlFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("image/png"));
             // Web API configuration and services
 
             // Web API routes

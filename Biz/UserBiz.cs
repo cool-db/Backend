@@ -14,14 +14,18 @@ namespace Backend.Biz
             {
                 var body = Helper.Decode(json);
                 var token = body["token"];
-                var response = (from user in context.Users
+                var query = from user in context.Users
                     where user.Token == token
                     select new
                     {
                         user.Id,
                         user.Name
-                    }).SingleOrDefault();
-                //todo Not Found Check
+                    };
+                if (!query.Any())
+                {
+                    return "Token not found";
+                }
+                var response = query.SingleOrDefault();
                 return response;
             }
         }

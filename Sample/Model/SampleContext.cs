@@ -9,8 +9,8 @@ namespace Backend.Sample.Model
             Database.SetInitializer(new DropCreateDatabaseAlways<SampleContext>());
         }
 
-        public DbSet<SampleData> Category { get; set; }
-
+        public DbSet<SampleData> Datas { get; set; }
+        public DbSet<SampleFile> Files { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
