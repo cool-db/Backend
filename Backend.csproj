@@ -108,10 +108,13 @@
     <Compile Include="Model\TaskOperation.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Model\UserInfo.cs" />
-    <Compile Include="Sample\Biz\SampleBiz.cs" />
-    <Compile Include="Sample\Controller\SampleController.cs" />
+    <Compile Include="Sample\Biz\SampleDataBiz.cs" />
+    <Compile Include="Sample\Biz\SampleFileBiz.cs" />
+    <Compile Include="Sample\Controller\SampleDataController.cs" />
+    <Compile Include="Sample\Controller\SampleFileController.cs" />
     <Compile Include="Sample\Model\SampleContext.cs" />
     <Compile Include="Sample\Model\SampleData.cs" />
+    <Compile Include="Sample\Model\SampleFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Biz\" />
