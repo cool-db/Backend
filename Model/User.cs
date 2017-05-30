@@ -17,7 +17,7 @@ namespace Backend.Model
             Comments = new List<Comment>();
             Schedules = new List<Schedule>();
             Subtasks = new List<Subtask>();
-            GenerateToken();
+//            GenerateToken();
         }
 
         public int Id { get; set; }
@@ -44,7 +44,7 @@ namespace Backend.Model
 
         public void GenerateToken()
         {
-            Token = GetHashCode().ToString();
+//            Token = DateTime.Now.ToLongTimeString();
         }
 
         public bool Authorize(int id, string token)

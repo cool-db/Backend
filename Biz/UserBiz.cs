@@ -41,7 +41,7 @@ namespace Backend.Biz
                 var query = context.Users.Where(user => user.Email == email && user.Password == password);
                 if (!query.Any())
                     return Helper.Error(401, "邮箱或密码错误");
-                
+
                 //修改&保存
                 var theUser = query.Single();
                 theUser.GenerateToken();
@@ -93,10 +93,10 @@ namespace Backend.Biz
                 if (context.Users.Any(user => user.Email == email))
                     return Helper.Error(401, "该email已注册");
 
-                var newUser = new User()
+                var newUser = new User
                 {
                     Email = email,
-                    Password = password
+                    Password = password,
                 };
                 context.Users.Add(newUser);
                 context.SaveChanges();

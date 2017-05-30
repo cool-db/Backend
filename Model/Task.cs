@@ -33,6 +33,7 @@ namespace Backend.Model
         public bool State { get; set; }
         
         public int ProgressId { get; set; }
+        public int OwnerId { get; set; }
         public virtual Progress Progress { get; set; }
 
         public virtual ICollection<User> Users{ get; set; }

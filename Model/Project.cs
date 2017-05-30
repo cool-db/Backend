@@ -26,7 +26,7 @@ namespace Backend.Model
         [MaxLength(100)]
         public string Description { get; set; }
 
-        public int UserId { get; set; }//创建者
+        public int OwnerId { get; set; }//创建者
 //        public User User { get; set; }
         
         public virtual ICollection<Progress> Progresses { get; set; }

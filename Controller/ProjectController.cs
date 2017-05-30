@@ -5,6 +5,8 @@ namespace Backend.Controller
 {
     public class ProjectController : ApiController
     {
+        #region project
+
         [HttpPost]
         [Route("api/project")]
         public object CreateProjext(object json)
@@ -18,21 +20,21 @@ namespace Backend.Controller
         {
             return ProjectBiz.DeleteProject(json);
         }
-        
+
         [HttpGet]
         [Route("api/project")]
         public object GetInfo(int projectId)
         {
             return ProjectBiz.GetInfo(projectId);
         }
-        
-        [HttpPost]
+
+        [HttpPut]
         [Route("api/project")]
         public object UpdateInfo(object json)
         {
             return ProjectBiz.UpdateInfo(json);
         }
-        
+
         [HttpPut]
         [Route("api/project/owner")]
         public object ChangeOwner(object json)
@@ -42,9 +44,22 @@ namespace Backend.Controller
 
         [HttpGet]
         [Route("api/project/list")]
-        public object GetList(int userId, string userToken)
+        public object GetList(int ownerId, string ownerToken)
         {
-            return ProjectBiz.GetList(userId, userToken);
+            return ProjectBiz.GetList(ownerId, ownerToken);
         }
+        #endregion
+
+        #region project member
+
+        [HttpPost]
+        [Route("api/project/member")]
+        public object AddMember(object json)
+        {
+            return ProjectBiz.AddMember(json);
+        }
+
+        #endregion
+
     }
 }
