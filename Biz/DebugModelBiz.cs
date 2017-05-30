@@ -35,14 +35,14 @@ namespace Backend.Biz
                 {
                     Name = "test",
                     Description = "suck",
-                    UserId = 1
+                    OwnerId = 1
                 };
 
                 var project2 = new Project()
                 {
                     Name = "fuck",
                     Description = "yea",
-                    UserId = 1
+                    OwnerId = 1
                 };
 
 
