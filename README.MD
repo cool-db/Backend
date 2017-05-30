@@ -29,3 +29,13 @@
 - Model：完成数据库层代码后，使用Paw测试Local.DebugModel，返回成功后用Rider查看数据库是否符合预期。
 - Controller：只有处理Http请求、分发业务的功能，不会产生棘手的bug，使用Paw查看能否处理Http请求即可。
 - Biz：完成业务代码后，使用Paw发起Http请求、Controller分发对应的业务，查看结果是否符合预期。
+
+## Http状态码和返回信息
+
+成功时返回```{code:200}```
+
+错误时返回```{code: int,message: string}```，其中，code约定如下：  
+- 401 未授权
+- 404 未找到
+
+message为出错时的错误信息
