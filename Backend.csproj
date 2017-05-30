@@ -82,7 +82,6 @@
     <Compile Include="Biz\DebugModelBiz.cs" />
     <Compile Include="Biz\FileBiz.cs" />
     <Compile Include="Biz\Helper.cs" />
-    <Compile Include="Biz\Logger.cs" />
     <Compile Include="Biz\ProjectBiz.cs" />
     <Compile Include="Biz\ScheduleBiz.cs" />
     <Compile Include="Biz\TaskBiz.cs" />

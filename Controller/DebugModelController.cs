@@ -6,10 +6,10 @@ namespace Backend.Controller
 {
     public class DebugModelController : ApiController
     {
-        [HttpGet]
-        public Object Get()
+        [HttpPost]
+        public object DebugModel(object json)
         {
-            return DebugModelBiz.DebugModel();
+            return DebugModelBiz.DebugModel(json);
         }
     }
 }

@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.Entity;
 using Backend.Model;
 
 namespace Backend.Biz
 {
     public static class DebugModelBiz
     {
-        public static Object DebugModel()
+        public static object DebugModel(object json)
         {
             using (var context = new BackendContext())
             {
-                context.Database.Log = Logger.Log; //todo
+                var body = Helper.Decode(json);
+                var isRebuild = bool.Parse(body["isRebuild"]);
+                if (isRebuild)
+                    Database.SetInitializer(new DropCreateDatabaseAlways<BackendContext>());
 
-                
                 var user = new User()
                 {
                     Email = "xt@xt.cn",
@@ -28,43 +29,39 @@ namespace Backend.Biz
                         Website = "xt.cn",
                         Birthday = DateTime.Now
                     }
-                
                 };
-                
+
                 var project = new Project()
                 {
                     Name = "test",
-                    Description = "suck"
+                    Description = "suck",
+                    UserId = 1
                 };
-                
+
                 var project2 = new Project()
                 {
                     Name = "fuck",
-                    Description = "yea"
+                    Description = "yea",
+                    UserId = 1
                 };
 
-                
+
                 user.Projects.Add(project);
                 project.Users.Add(user);
                 project2.Users.Add(user);
-                
+
                 context.Projects.Add(project);
                 context.Projects.Add(project2);
                 context.Users.Add(user);
 
                 context.SaveChanges();
 
-                try
+                Database.SetInitializer(new CreateDatabaseIfNotExists<BackendContext>());
+                return new
                 {
-                    context.SaveChanges();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-                
-                return "success";
+                    code = 200,
+                    message = "success"
+                };
             }
         }
     }

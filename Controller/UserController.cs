@@ -6,47 +6,55 @@ namespace Backend.Controller
 {
     public class UserController : ApiController
     {
-//        [HttpPost]
-//        [Route("api/authority")]
-//        public object Authority(object json)
-//        {
-//            return UserBiz.Authority(json);
-//        }
-//
-//        [HttpPost]
-//        [Route("api/user")]
-//        public object Login(object json)
-//        {
-//            return UserBiz.Login(json);
-//        }
-//
-//        [HttpDelete]
-//        [Route("api/user")]
-//        public object Logout(object json)
-//        {
-//            return UserBiz.Logout(json);
-//        }
-//
-//        [HttpPost]
-//        [Route("api/registration")]
-//        public object Registration(object json)
-//        {
-//            return UserBiz.Registration(json);
-//        }
-//
-//        [HttpGet]
-//        [Route("api/user")]
-//        public object GetInfo(int sender_id, int getter_id)
-//        {
-//            return UserBiz.GetInfo(sender_id, getter_id);
-//        }
-//        
-//        
-//        [HttpPut]
-//        [Route("api/user/pwd")]
-//        public object ChangePassword(object json)
-//        {
-//            return UserBiz.ChangePassword(json);
-//        }
+        [HttpPost]
+        [Route("api/authority")]
+        public object Authorize(object json)
+        {
+            return UserBiz.Authorize(json);
+        }
+
+        [HttpPost]
+        [Route("api/login")]
+        public object Login(object json)
+        {
+            return UserBiz.Login(json);
+        }
+
+        [HttpDelete]
+        [Route("api/login")]
+        public object Logout(object json)
+        {
+            return UserBiz.Logout(json);
+        }
+
+        [HttpPost]
+        [Route("api/user")]
+        public object Registrate(object json)
+        {
+            return UserBiz.Registrate(json);
+        }
+
+        [HttpPut]
+        [Route("api/user")]
+        public object UpdateInfo(object json)
+        {
+            return UserBiz.UpdateInfo(json);
+        }
+        
+        [HttpGet]
+        [Route("api/user")]
+        public object GetInfo(int id, string token="")
+        {
+            return UserBiz.GetInfo(id, token);
+        }
+        
+        
+        [HttpPut]
+        [Route("api/user/pwd")]
+        public object ChangePassword(object json)
+        {
+            return UserBiz.ChangePassword(json);
+        }
+        
     }
 }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Net.Cache;
+using Backend.Biz;
 
 namespace Backend.Model
 {
@@ -15,8 +17,9 @@ namespace Backend.Model
             Comments = new List<Comment>();
             Schedules = new List<Schedule>();
             Subtasks = new List<Subtask>();
+            GenerateToken();
         }
-        
+
         public int Id { get; set; }
 
         [Required]
@@ -28,10 +31,10 @@ namespace Backend.Model
         public string Password { get; set; }
 
         [MaxLength(20)]
-        [Index(IsUnique=true)]
+        [Index(IsUnique = true)]
         public string Token { get; set; }
-        
-        
+
+
         public virtual UserInfo UserInfo { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
@@ -39,5 +42,17 @@ namespace Backend.Model
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<Subtask> Subtasks { get; set; }
 
+        public void GenerateToken()
+        {
+            Token = GetHashCode().ToString();
+        }
+
+        public bool Authorize(int id, string token)
+        {
+            using (var context = new BackendContext())
+            {
+                return context.Users.Any(user => user.Id==id&&user.Token==token);
+            }
+        }
     }
 }

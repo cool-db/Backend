@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
+using Backend.Biz;
 
 namespace Backend.Model
 {
@@ -8,13 +9,14 @@ namespace Backend.Model
     {
         public BackendContext() : base("Backend")
         {
-            Database.SetInitializer(new DropCreateDatabaseAlways<BackendContext>());
+            Database.SetInitializer(new CreateDatabaseIfNotExists<BackendContext>());
+            Database.Log = Helper.Log;
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("BACKEND");
-            base.OnModelCreating(modelBuilder);//todo
+            base.OnModelCreating(modelBuilder); //todo
         }
 
         public override int SaveChanges()
@@ -49,6 +51,6 @@ namespace Backend.Model
         public DbSet<Task> Tasks { get; set; }
         public DbSet<TaskOperation> TaskOperations { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet UserInfoes { get; set; } 
+        public DbSet UserInfoes { get; set; }
     }
 }
