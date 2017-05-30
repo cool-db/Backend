@@ -1,37 +1,58 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Net.Cache;
+using Backend.Biz;
 
 namespace Backend.Model
 {
     public class User
     {
+        public User()
+        {
+            Projects = new List<Project>();
+            Tasks = new List<Task>();
+            Comments = new List<Comment>();
+            Schedules = new List<Schedule>();
+            Subtasks = new List<Subtask>();
+//            GenerateToken();
+        }
+
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(20)]
         public string Email { get; set; }
 
         [Required]
+        [MaxLength(20)]
         public string Password { get; set; }
 
-        [StringLength(200)]
-        public string Address { get; set; }
+        [MaxLength(20)]
+        [Index(IsUnique = true)]
+        public string Token { get; set; }
 
-        [Required]
-        public string Name { get; set; }
 
-        [Required]
-        public Boolean Gender { get; set; }
+        public virtual UserInfo UserInfo { get; set; }
+        public virtual ICollection<Project> Projects { get; set; }
+        public virtual ICollection<Task> Tasks { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
+        public virtual ICollection<Subtask> Subtasks { get; set; }
 
-        [StringLength(30)]
-        public string Phonenumbers { get; set; }
+        public void GenerateToken()
+        {
+//            Token = DateTime.Now.ToLongTimeString();
+        }
 
-        [StringLength(40)]
-        public string Job { get; set; }
-
-        [StringLength(40)]
-        public string Website { get; set; }
-
-        public DateTime Birthday { get; set; }
+        public bool Authorize(int id, string token)
+        {
+            using (var context = new BackendContext())
+            {
+                return context.Users.Any(user => user.Id==id&&user.Token==token);
+            }
+        }
     }
 }

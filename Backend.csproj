@@ -45,6 +45,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -79,6 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Biz\DebugModelBiz.cs" />
+    <Compile Include="Biz\FileBiz.cs" />
+    <Compile Include="Biz\Helper.cs" />
+    <Compile Include="Biz\ProjectBiz.cs" />
+    <Compile Include="Biz\ScheduleBiz.cs" />
+    <Compile Include="Biz\TaskBiz.cs" />
+    <Compile Include="Biz\UserBiz.cs" />
     <Compile Include="Controller\FileController.cs" />
     <Compile Include="Controller\ProjectController.cs" />
     <Compile Include="Controller\ScheduleController.cs" />
@@ -88,25 +95,25 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Model\Attachment.cs" />
     <Compile Include="Model\BackendContext.cs" />
     <Compile Include="Model\Comment.cs" />
     <Compile Include="Model\File.cs" />
     <Compile Include="Model\Progress.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\ProjectOperation.cs" />
-    <Compile Include="Model\ProjectUser.cs" />
     <Compile Include="Model\Schedule.cs" />
-    <Compile Include="Model\ScheduleUser.cs" />
     <Compile Include="Model\Subtask.cs" />
     <Compile Include="Model\Task.cs" />
-    <Compile Include="Model\TaskMember.cs" />
     <Compile Include="Model\TaskOperation.cs" />
     <Compile Include="Model\User.cs" />
-    <Compile Include="Sample\Biz\SampleBiz.cs" />
-    <Compile Include="Sample\Controller\SampleController.cs" />
+    <Compile Include="Model\UserInfo.cs" />
+    <Compile Include="Sample\Biz\SampleDataBiz.cs" />
+    <Compile Include="Sample\Biz\SampleFileBiz.cs" />
+    <Compile Include="Sample\Controller\SampleDataController.cs" />
+    <Compile Include="Sample\Controller\SampleFileController.cs" />
     <Compile Include="Sample\Model\SampleContext.cs" />
     <Compile Include="Sample\Model\SampleData.cs" />
+    <Compile Include="Sample\Model\SampleFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Biz\" />

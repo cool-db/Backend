@@ -7,17 +7,14 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
-        [Required]
-        public int ProjectId { get; set; }
-
-        [Required]
-        public int UserId { get; set; }
-
-        [Required]
         public DateTime Time { get; set; }
 
-        [StringLength(100)]
+        [Required]
+        [MaxLength(200)]
         public string Content { get; set; }
+        
+        public int ProjectId { get; set; }
+        public int UserId { get; set; } //操作者
 
         public virtual Project Project { get; set; }
         public virtual User User { get; set; }

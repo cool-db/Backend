@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
+using Backend.Biz;
 
 namespace Backend.Model
 {
@@ -8,13 +9,16 @@ namespace Backend.Model
     {
         public BackendContext() : base("Backend")
         {
-            Database.SetInitializer(new DropCreateDatabaseAlways<BackendContext>());
+            Database.SetInitializer(new CreateDatabaseIfNotExists<BackendContext>());
+            Database.Log = Helper.Log;
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("BACKEND");
+            base.OnModelCreating(modelBuilder); //todo
         }
+
         public override int SaveChanges()
         {
             try
@@ -37,6 +41,7 @@ namespace Backend.Model
             }
         }
 
+<<<<<<< HEAD
         public DbSet<Attachment>           Attachments { get; set; }
         public DbSet<Comment>              Comments { get; set; }
         public DbSet<File>                 File { get; set; }
@@ -52,5 +57,18 @@ namespace Backend.Model
         public DbSet<TaskOperation>        TaskOperations { get; set; }
         public DbSet<User>                 Users { get; set; }
 
+=======
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<File> File { get; set; }
+        public DbSet<Progress> Progresses { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectOperation> ProjectOperations { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<Subtask> Subtasks { get; set; }
+        public DbSet<Task> Tasks { get; set; }
+        public DbSet<TaskOperation> TaskOperations { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet UserInfoes { get; set; }
+>>>>>>> 30d5fd5579c23fc285be06ef695c25da9c659b3d
     }
 }

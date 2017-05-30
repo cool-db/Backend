@@ -7,19 +7,16 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
-        [Required]
-        public int TaskId { get; set; }
-
-        [Required]
-        public int UserId { get; set; }
-
-        [Required]
         public DateTime Time { get; set; }
 
-        [StringLength(80)]
+        [Required]
+        [MaxLength(100)]
         public string Content { get; set; }
 
-        public virtual User Task { get; set; }
+        public int TaskId { get; set; }
+        public int UserId { get; set; }//执行者
+        
         public virtual User User { get; set; }
+        public virtual Task Task { get; set; }
     }
 }

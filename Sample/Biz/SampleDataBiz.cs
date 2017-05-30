@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Web;
 using Backend.Sample.Model;
 
 namespace Backend.Sample.Biz
 {
-    public static class SampleBiz
+    public static class SampleDataBiz
     {
-        public static Object GetFromSampleDb()
+        public static object GetFromSampleDb()
         {
             using (var context = new SampleContext())
             {
@@ -16,9 +17,9 @@ namespace Backend.Sample.Biz
                     Content = "It is content",
                     CreateDate = DateTime.Now
                 };
-                context.Category.Add(data);
+                context.Datas.Add(data);
                 context.SaveChanges();
-
+                
                 return data;
             }
         }

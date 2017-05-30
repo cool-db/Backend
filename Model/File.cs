@@ -7,22 +7,19 @@ namespace Backend.Model
     {
         public int Id { get; set; }
 
-        [StringLength(40)]
+        [Required]
+        [MaxLength(40)]
         public string Name { get; set; }
 
-        //todo
-        public string Content { get; set; }
+        public byte[] Content { get; set; }
 
-        [Required]
         public DateTime UploadTime { get; set; }
 
-        [Required]
-        public int UploaderId { get; set; }
-
-        [Required]
-        public int ProjectId { get; set; }
-
-        public virtual User UpLoader { get; set; }
-        public virtual Project Project { get; set; }
+        
+        public int UserId { get; set; }
+        public int TaskId { get; set; }
+        
+        public virtual User User { get; set; } //上传文件者
+        public virtual Task Task { get; set; } //依附的任务
     }
 }
