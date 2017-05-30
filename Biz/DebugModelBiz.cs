@@ -34,7 +34,7 @@ namespace Backend.Biz
                 var project = new Project()
                 {
                     Name = "test",
-                    Description = "suck",
+                    Description = "yuck",
                     OwnerId = 1
                 };
 
