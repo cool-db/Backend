@@ -16,7 +16,7 @@ namespace Backend.Model
         public DateTime Time { get; set; }
 
 
-        public int UserId { get; set; }
+        public int UserId { get; set; }//评论发起人
         public int TaskId { get; set; }
 
         public virtual User User { get; set; }

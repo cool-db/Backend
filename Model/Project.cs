@@ -27,11 +27,10 @@ namespace Backend.Model
         public string Description { get; set; }
 
         public int OwnerId { get; set; }//创建者
-//        public User User { get; set; }
         
         public virtual ICollection<Progress> Progresses { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; } 
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<User> Users { get; set; } //项目成员
         public virtual ICollection<ProjectOperation> ProjectOperations { get; set; }
         
     }

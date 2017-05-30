@@ -32,12 +32,12 @@ namespace Backend.Model
         [MaxLength(40)]
         public string Location { get; set; }
 
-        //public int UserId { get; set; }
+        public int OwerId { get; set; } //创建者
+        
         public int ProjectId { get; set; }
         
-        //public virtual User User { get; set; }
         public virtual Project Project { get; set; }
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<User> Users { get; set; } //项目成员
 
     }
 }

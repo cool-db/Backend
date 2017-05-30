@@ -14,7 +14,7 @@ namespace Backend.Model
         public string Content { get; set; }
 
         public int TaskId { get; set; }
-        public int UserId { get; set; }
+        public int UserId { get; set; }//执行者
         
         public virtual User User { get; set; }
         public virtual Task Task { get; set; }

@@ -13,7 +13,7 @@ namespace Backend.Model
 
         public bool State { get; set; }
 
-        public int UserID { get; set; }
+        public int UserId { get; set; }//执行者/拥有者
         public int TaskId { get; set; }
 
         public virtual User User { get; set; }

@@ -19,7 +19,7 @@ namespace Backend.Model
         public int UserId { get; set; }
         public int TaskId { get; set; }
         
-        public virtual User User { get; set; }
-        public virtual Task Task { get; set; }
+        public virtual User User { get; set; } //上传文件者
+        public virtual Task Task { get; set; } //依附的任务
     }
 }
