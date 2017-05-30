@@ -14,6 +14,8 @@ namespace Backend.Model
             Comments = new List<Comment>();
             Subtasks = new List<Subtask>();
             TaskOperations = new List<TaskOperation>();
+            Files = new List<File>();
+
         }
         
         public int Id { get; set; }
@@ -37,5 +39,7 @@ namespace Backend.Model
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Subtask> Subtasks { get; set; }
         public virtual ICollection<TaskOperation> TaskOperations { get; set; }
+        public virtual ICollection<File> Files { get; set; }
+
     }
 }

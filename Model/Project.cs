@@ -13,7 +13,6 @@ namespace Backend.Model
             Progresses = new List<Progress>();
             Schedules = new List<Schedule>();
             Users = new List<User>();
-            Files = new List<File>();
             ProjectOperations = new List<ProjectOperation>();
         }
         
@@ -33,7 +32,6 @@ namespace Backend.Model
         public virtual ICollection<Progress> Progresses { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; } 
         public virtual ICollection<User> Users { get; set; }
-        public virtual ICollection<File> Files { get; set; }
         public virtual ICollection<ProjectOperation> ProjectOperations { get; set; }
         
     }
