@@ -48,6 +48,7 @@ namespace Backend.Controller
         {
             return ProjectBiz.GetList(ownerId, ownerToken);
         }
+
         #endregion
 
         #region project member
@@ -59,7 +60,38 @@ namespace Backend.Controller
             return ProjectBiz.AddMember(json);
         }
 
+        [HttpDelete]
+        [Route("api/project/member")]
+        public object DeleteMember(object json)
+        {
+            return ProjectBiz.DeleteMember(json);
+        }
+
+        [HttpGet]
+        [Route("api/project/member")]
+        public object GetMemberList(int projectId)
+        {
+            return ProjectBiz.GetMemberList(projectId);
+        }
+
         #endregion
 
+        #region permission
+
+//        [HttpGet]
+//        [Route("api/project/permission")]
+//        public object GetPermission(int userId, int projectId)
+//        {
+//            return ProjectBiz.GetPermission(userId, projectId);
+//        }
+//
+//        [HttpPost]
+//        [Route("api/project/permission")]
+//        public object UpdatePermission(int userId, int projectId)
+//        {
+//            return ProjectBiz.UpdatePermission(userId, projectId);
+//        }
+        
+        #endregion
     }
 }
