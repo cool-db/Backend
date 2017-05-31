@@ -41,23 +41,6 @@ namespace Backend.Model
             }
         }
 
-<<<<<<< HEAD
-        public DbSet<Attachment>           Attachments { get; set; }
-        public DbSet<Comment>              Comments { get; set; }
-        public DbSet<File>                 File { get; set; }
-        public DbSet<Progress>             Progresses { get; set; }
-        public DbSet<Project>              Projects { get; set; }
-        public DbSet<ProjectOperation>     ProjectOperations { get; set; }
-        public DbSet<ProjectUser>          ProjectUsers { get; set; }
-        public DbSet<Schedule>             Schedules { get; set; }
-        public DbSet<ScheduleUser>         ScheduleUsers { get; set; }
-        public DbSet<Subtask>              Subtasks { get; set; }
-        public DbSet<Task>                 Tasks { get; set; }
-        public DbSet<TaskMember>           TaskMembers { get; set; }
-        public DbSet<TaskOperation>        TaskOperations { get; set; }
-        public DbSet<User>                 Users { get; set; }
-
-=======
         public DbSet<Comment> Comments { get; set; }
         public DbSet<File> File { get; set; }
         public DbSet<Progress> Progresses { get; set; }
@@ -69,6 +52,5 @@ namespace Backend.Model
         public DbSet<TaskOperation> TaskOperations { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet UserInfoes { get; set; }
->>>>>>> 30d5fd5579c23fc285be06ef695c25da9c659b3d
     }
 }
