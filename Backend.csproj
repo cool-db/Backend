@@ -109,6 +109,7 @@
     <Compile Include="Model\UserInfo.cs" />
     <Compile Include="Sample\Biz\SampleDataBiz.cs" />
     <Compile Include="Sample\Biz\SampleFileBiz.cs" />
+    <Compile Include="Sample\Controller\SampleAuth.cs" />
     <Compile Include="Sample\Controller\SampleDataController.cs" />
     <Compile Include="Sample\Controller\SampleFileController.cs" />
     <Compile Include="Sample\Model\SampleContext.cs" />
