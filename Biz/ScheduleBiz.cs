@@ -50,7 +50,7 @@ namespace Backend.Biz
                     Name = scheduleName,
                     OwerId = int.Parse(creatorId),
                     RepeatDaily = bool.Parse(repeatDaily),
-                    RepeatWeekly = bool.Parse(repeatWeekly)
+                    RepeatWeekly = bool.Parse(repeatWeekly),
                     
                 };
                 context.Schedules.Add(newSchedule);
