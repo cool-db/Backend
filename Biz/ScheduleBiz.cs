@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Backend.Model;
 using System.Linq;
@@ -12,33 +14,62 @@ namespace Backend.Biz
             
             using (var context = new BackendContext())
             {
-               
                 var scheduleName = body["scheduleName"];
+                Console.WriteLine(scheduleName);
                 var scheduleContent = body["scheduleContent"];
                 var location = body["location"];
                 var startTime = body["startTime"];
+                var endTime = body["endTime"];
+                var repeatDaily = body["repeatDaily"];
+                var repeatWeekly = body["repeatWeekly"];
+                var participatorIds = Helper.DecodeToList(body["participatorIds"]);
+                Console.WriteLine(participatorIds);
+                var creatorId = body["creatorId"];
 
-                var query = context.Users.Where(user => user.Id == ownerId && user.Token == ownerToken);
-                if (!query.Any())
-                    return Helper.Error(401, "token错误");
-
-                var newProject = new Project
+                var users = new List<User>();
+                var ids = new List<int>();
+                foreach (var participatorId in participatorIds)
                 {
-                    Name = projectName,
-                    Description = projectDescription,
-                    OwnerId = ownerId
+                    var queryUser = context.Users.Where(user => user.Id == int.Parse(participatorId));
+                    
+                    if (!queryUser.Any())
+                        return Helper.Error(401, "用户" + participatorId + "不存在");
+                    
+                    users.Add(queryUser.Single());
+                    ids.Add(int.Parse(participatorId));
+                }
+
+                //var users = participatorIds.Select(participatorId => context.Users.Single(user => user.Id == int.Parse(participatorId))).ToList();
+                var newSchedule = new Schedule
+                {
+                    Users = users,
+                    Content = scheduleContent,
+                    EndTime = DateTime.Parse(endTime),
+                    StartTime = DateTime.Parse(startTime),
+                    Location = location,
+                    Name = scheduleName,
+                    OwerId = int.Parse(creatorId),
+                    RepeatDaily = bool.Parse(repeatDaily),
+                    RepeatWeekly = bool.Parse(repeatWeekly)
+                    
                 };
-                newProject.Users.Add(query.Single());
-                context.Projects.Add(newProject);
+                context.Schedules.Add(newSchedule);
                 context.SaveChanges();
 
                 return new
                 {
-                    projectId = newProject.Id,
-                    projectName = newProject.Name,
-                    projectDescription = newProject.Description,
+                    scheduleId = newSchedule.Id,
+                    scheduleName = newSchedule.Name,
+                    scheduleContent = newSchedule.Content,
+                    location = newSchedule.Location,
+                    startTime = newSchedule.StartTime,
+                    endTime = newSchedule.EndTime,
+                    repeatDaily = newSchedule.RepeatDaily,
+                    repeatWeekly = newSchedule.RepeatWeekly,
+                    participatorIds = ids,
                     code = 200
                 };
+
             }
         }
         
