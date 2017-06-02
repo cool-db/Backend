@@ -66,7 +66,7 @@ namespace Backend.Biz
                 return new
                 {
                     taskId = newTask.Id,
-//                    newTask.Progress,
+                    newTask.Progress.Id,
                     name = newTask.Name,
                     content = newTask.Content,
                     state = newTask.State,
