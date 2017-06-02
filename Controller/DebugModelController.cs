@@ -6,7 +6,7 @@ namespace Backend.Controller
 {
     public class DebugModelController : ApiController
     {
-        [HttpGet]
+        [HttpPost]
         public object DebugModel(object json)
         {
             return DebugModelBiz.DebugModel(json);
