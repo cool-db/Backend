@@ -11,6 +11,12 @@ namespace Backend.Controller
 //        {
 //            return TaskBiz.AddTask(json);
 //        }
+        [HttpPost]
+        [Route("api/task")]
+        public object CreateTask(object json)
+        {
+            return TaskBiz.CreateTask(json);
+        }
 
     }
 }
