@@ -12,9 +12,10 @@ namespace Backend.Biz
         PUT,
         GET,
         POST,
-        DELETE
+        DELETE,
+        SPECIAL //todo
     }
-    
+
     public class Helper
     {
         public bool IsRebuild;
@@ -33,7 +34,7 @@ namespace Backend.Biz
         {
             return JObject.Parse(json.ToString());
         }
-        
+
         public static List<object> DecodeToList(object json)
         {
             return JsonConvert.DeserializeObject<List<object>>(json.ToString());
@@ -62,11 +63,12 @@ namespace Backend.Biz
             return DateTime.Parse(dateTimeString);
         }
 
-        public static bool CheckPermission(int projectId, int userId , bool isOwner , OperationType type)
+        public static bool CheckPermission(int projectId, int userId, bool isOwner, OperationType type)
         {
+            
             if (isOwner)
                 return true;
-            
+
             using (var context = new BackendContext())
             {
                 var project = (from p in context.Projects
@@ -79,16 +81,17 @@ namespace Backend.Biz
 
                 switch (type)
                 {
-                     case OperationType.GET:
-                         return true;
-                     case OperationType.POST:
-                         return true;
-                     case OperationType.DELETE: 
-                     case OperationType.PUT:
-                         if (permission != Permission.Participant)
-                             return true;
-                         else
-                             return false;
+                    case OperationType.GET:
+                    case OperationType.POST:
+                    case OperationType.SPECIAL:
+                        return true;
+                        
+                    case OperationType.DELETE:
+                    case OperationType.PUT:
+                        if (permission != Permission.Participant)
+                            return true;
+                        else
+                            return false;
                 }
             }
 
