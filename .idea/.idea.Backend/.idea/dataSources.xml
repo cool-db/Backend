@@ -1,14 +1,7 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="backend" uuid="d94960e7-27db-4ef2-967c-d090634a8340">
-      <driver-ref>oracle</driver-ref>
-      <synchronize>true</synchronize>
-      <auto-commit>false</auto-commit>
-      <jdbc-driver>oracle.jdbc.OracleDriver</jdbc-driver>
-      <jdbc-url>jdbc:oracle:thin:@123.207.222.112:1521:orcl</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="Backup" uuid="2b9b3356-c91f-4edb-9c56-7029a10b49f7">
+    <data-source source="LOCAL" name="@123.207.222.112" uuid="4e414be7-a832-4b41-86e4-e9bcde0a637c">
       <driver-ref>oracle</driver-ref>
       <synchronize>true</synchronize>
       <auto-commit>false</auto-commit>

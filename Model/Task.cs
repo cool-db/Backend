@@ -42,6 +42,5 @@ namespace Backend.Model
         public virtual ICollection<Subtask> Subtasks { get; set; }
         public virtual ICollection<TaskOperation> TaskOperations { get; set; }
         public virtual ICollection<File> Files { get; set; }
-
     }
 }
