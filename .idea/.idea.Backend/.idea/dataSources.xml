@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿﻿<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
@@ -9,6 +10,12 @@
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
     <data-source source="LOCAL" name="@123.207.222.112" uuid="4e414be7-a832-4b41-86e4-e9bcde0a637c">
 >>>>>>> task
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="@123.207.222.112" uuid="57c5c3cf-3e62-40bc-a46d-757952cf64f1">
+>>>>>>> a9538d89fab0c7bf57cd69e4eb1acf988a4b7574
       <driver-ref>oracle</driver-ref>
       <synchronize>true</synchronize>
       <auto-commit>false</auto-commit>
