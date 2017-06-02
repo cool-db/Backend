@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Backend.Model;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Backend.Biz
 {
@@ -28,6 +29,11 @@ namespace Backend.Biz
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(json.ToString());
         }
 
+        public static JObject DecodeToObject(object json)
+        {
+            return JObject.Parse(json.ToString());
+        }
+        
         public static List<object> DecodeToList(object json)
         {
             return JsonConvert.DeserializeObject<List<object>>(json.ToString());
