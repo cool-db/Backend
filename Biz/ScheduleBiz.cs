@@ -1,8 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Backend.Model;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Backend.Biz
 {
@@ -10,33 +10,37 @@ namespace Backend.Biz
     {
         public static object CreateSchedule(object json)
         {
-            var body = Helper.Decode(json);
+            var body = Helper.DecodeToObject(json);
             
             using (var context = new BackendContext())
             {
-                var scheduleName = body["scheduleName"];
-                Console.WriteLine(scheduleName);
-                var scheduleContent = body["scheduleContent"];
-                var location = body["location"];
-                var startTime = body["startTime"];
-                var endTime = body["endTime"];
-                var repeatDaily = body["repeatDaily"];
-                var repeatWeekly = body["repeatWeekly"];
-                var participatorIds = Helper.DecodeToList(body["participatorIds"]);
-                Console.WriteLine(participatorIds);
-                var creatorId = body["creatorId"];
-
+                var scheduleName = body["scheduleName"].ToString();
+                
+                var scheduleContent = body["scheduleContent"].ToString();
+                
+                var location = body["location"].ToString();
+                var startTime = DateTime.Parse(body["startTime"].ToString());
+                var endTime = DateTime.Parse(body["endTime"].ToString());
+                var repeatDaily = bool.Parse(body["repeatDaily"].ToString());
+                var repeatWeekly = bool.Parse(body["repeatWeekly"].ToString()); 
+                var participatorIds = JArray.Parse(body["participatorIds"].ToString());  
+                var creatorId = int.Parse(body["creatorId"].ToString());
+                var projectId = int.Parse(body["projectId"].ToString());
+                
                 var users = new List<User>();
                 var ids = new List<int>();
                 foreach (var participatorId in participatorIds)
-                {
-                    var queryUser = context.Users.Where(user => user.Id == int.Parse(participatorId));
+                { 
+                    var id = int.Parse(participatorId.ToString());
+                    var queryUser = context.Users.Where(user => user.Id == id);
                     
                     if (!queryUser.Any())
                         return Helper.Error(401, "用户" + participatorId + "不存在");
                     
                     users.Add(queryUser.Single());
-                    ids.Add(int.Parse(participatorId));
+                    
+                    ids.Add(id);
+                 
                 }
 
                 //var users = participatorIds.Select(participatorId => context.Users.Single(user => user.Id == int.Parse(participatorId))).ToList();
@@ -44,14 +48,14 @@ namespace Backend.Biz
                 {
                     Users = users,
                     Content = scheduleContent,
-                    EndTime = DateTime.Parse(endTime),
-                    StartTime = DateTime.Parse(startTime),
+                    EndTime = endTime,
+                    StartTime = startTime,
                     Location = location,
                     Name = scheduleName,
-                    OwerId = int.Parse(creatorId),
-                    RepeatDaily = bool.Parse(repeatDaily),
-                    RepeatWeekly = bool.Parse(repeatWeekly),
-                    
+                    OwerId = creatorId,
+                    RepeatDaily = repeatDaily,
+                    RepeatWeekly = repeatWeekly,
+                    ProjectId = projectId
                 };
                 context.Schedules.Add(newSchedule);
                 context.SaveChanges();

@@ -19,9 +19,6 @@ namespace Backend.Biz
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(json.ToString());
         }
 
-
-        public static List<string> DecodeToList(object json)
-
         public static JObject DecodeToObject(object json)
         {
             return JObject.Parse(json.ToString());
@@ -30,7 +27,7 @@ namespace Backend.Biz
         public static List<object> DecodeToList(object json)
 
         {
-            return JsonConvert.DeserializeObject<List<string>>(json.ToString());
+            return JsonConvert.DeserializeObject<List<object>>(json.ToString());
         }
 
         public static object Error(int code, string message)

@@ -6,7 +6,7 @@ namespace Backend.Controller
     public class ScheduleController : ApiController
     {
         [HttpPost]
-        [Route("api/schedule")]
+        [Route("api/schedule/")]
         public object CreateSchedule(object json)
         {
             return ScheduleBiz.CreateSchedule(json);
