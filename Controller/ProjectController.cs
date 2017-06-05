@@ -8,12 +8,12 @@ namespace Backend.Controller
     {
         #region project
 
-        [HttpPost]
-        [Route("api/project")]
-        public object CreateProject(object json)
-        {
-            return ProjectBiz.CreateProject(json);
-        }
+//        [HttpPost]
+//        [Route("api/project")]
+//        public object CreateProject(object json)
+//        {
+//            return ProjectBiz.CreateProject(json);
+//        }
 
         [HttpDelete]
         [Route("api/project")]
@@ -97,40 +97,40 @@ namespace Backend.Controller
 
         #region progress
 
-        [HttpPost]
-        [Route("api/project/progress")]
-        public object CreateProgress(object json)
-        {
-            return ProjectBiz.CreateProgress(json);
-        }
-        
-        [HttpDelete]
-        [Route("api/project/progress")]
-        public object DeleteProgress(object json)
-        {
-            return ProjectBiz.DeleteProgress(json);
-        }
-        
-        [HttpPut]
-        [Route("api/project/progress/name")]
-        public object UpdateProgressName(object json)
-        {
-            return ProjectBiz.UpdateProgressName(json);
-        }
-        
-        [HttpPut]
-        [Route("api/project/progress/order")]
-        public object UpdateProgressOrder(object json)
-        {
-            return ProjectBiz.UpdateProgressOrder(json);
-        }
-        
-        [HttpGet]
-        [Route("api/project/progress/list")]
-        public object GetProgressList(int projectId)
-        {
-            return ProjectBiz.GetProgressList(projectId);
-        }
+//        [HttpPost]
+//        [Route("api/project/progress")]
+//        public object CreateProgress(object json)
+//        {
+//            return ProjectBiz.CreateProgress(json);
+//        }
+//        
+//        [HttpDelete]
+//        [Route("api/project/progress")]
+//        public object DeleteProgress(object json)
+//        {
+//            return ProjectBiz.DeleteProgress(json);
+//        }
+//        
+//        [HttpPut]
+//        [Route("api/project/progress/name")]
+//        public object UpdateProgressName(object json)
+//        {
+//            return ProjectBiz.UpdateProgressName(json);
+//        }
+//        
+//        [HttpPut]
+//        [Route("api/project/progress/order")]
+//        public object UpdateProgressOrder(object json)
+//        {
+//            return ProjectBiz.UpdateProgressOrder(json);
+//        }
+//        
+//        [HttpGet]
+//        [Route("api/project/progress/list")]
+//        public object GetProgressList(int projectId)
+//        {
+//            return ProjectBiz.GetProgressList(projectId);
+//        }
 
         #endregion
     }
