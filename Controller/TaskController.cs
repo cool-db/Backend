@@ -17,6 +17,20 @@ namespace Backend.Controller
         {
             return TaskBiz.CreateTask(json);
         }
+        
+        [HttpDelete]
+        [Route("api/task")]
+        public object DeleteTask(object json)
+        {
+            return TaskBiz.DeleteTask(json);
+        }
+        
+        [HttpGet]
+        [Route("api/task/list")]
+        public object GetTaskList(int projectId, int userId)
+        {
+            return TaskBiz.GetTaskList(projectId, userId);
+        }
 
     }
 }
