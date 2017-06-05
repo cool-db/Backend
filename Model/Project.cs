@@ -14,6 +14,7 @@ namespace Backend.Model
             Schedules = new List<Schedule>();
             Users = new List<User>();
             ProjectOperations = new List<ProjectOperation>();
+            UserPermissons = new List<UserPermisson>();
         }
         
         public int Id { get; set; }
@@ -32,6 +33,7 @@ namespace Backend.Model
         public virtual ICollection<Schedule> Schedules { get; set; } 
         public virtual ICollection<User> Users { get; set; } //项目成员
         public virtual ICollection<ProjectOperation> ProjectOperations { get; set; }
+        public virtual ICollection<UserPermisson> UserPermissons { get; set; }
         
     }
 }

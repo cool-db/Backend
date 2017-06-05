@@ -17,6 +17,7 @@ namespace Backend.Model
             Comments = new List<Comment>();
             Schedules = new List<Schedule>();
             Subtasks = new List<Subtask>();
+            UserPermissons = new List<UserPermisson>();
 //            GenerateToken();
         }
 
@@ -41,6 +42,7 @@ namespace Backend.Model
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<Subtask> Subtasks { get; set; }
+        public virtual ICollection<UserPermisson> UserPermissons { get; set; }
 
         public void GenerateToken()
         {

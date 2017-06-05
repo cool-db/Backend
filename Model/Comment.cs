@@ -4,7 +4,9 @@ using System.ComponentModel.DataAnnotations;
 namespace Backend.Model
 {
     public class Comment
-    {   
+    {
+      
+        
         public int Id { get; set; }
 
         [Required]
@@ -18,7 +20,6 @@ namespace Backend.Model
         public int TaskId { get; set; }
 
         public virtual User User { get; set; }
-        public virtual Task Task { get; set; }     
-        
+        public virtual Task Task { get; set; }
     }
 }

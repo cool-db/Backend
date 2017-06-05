@@ -30,28 +30,28 @@ namespace Backend.Biz
                         Birthday = DateTime.Now
                     }
                 };
-
-                var project = new Project()
-                {
-                    Name = "test",
-                    Description = "yuck",
-                    OwnerId = 1
-                };
-
-                var project2 = new Project()
-                {
-                    Name = "fuck",
-                    Description = "yea",
-                    OwnerId = 1
-                };
-
-
-                user.Projects.Add(project);
-                project.Users.Add(user);
-                project2.Users.Add(user);
-
-                context.Projects.Add(project);
-                context.Projects.Add(project2);
+//
+//                var project = new Project()
+//                {
+//                    Name = "test",
+//                    Description = "yuck",
+//                    OwnerId = 1
+//                };
+//
+//                var project2 = new Project()
+//                {
+//                    Name = "fuck",
+//                    Description = "yea",
+//                    OwnerId = 1
+//                };
+//
+//
+//                user.Projects.Add(project);
+//                project.Users.Add(user);
+//                project2.Users.Add(user);
+//
+//                context.Projects.Add(project);
+//                context.Projects.Add(project2);
                 context.Users.Add(user);
 
                 context.SaveChanges();

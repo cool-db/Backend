@@ -107,8 +107,10 @@
     <Compile Include="Model\TaskOperation.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Model\UserInfo.cs" />
+    <Compile Include="Model\UserPermisson.cs" />
     <Compile Include="Sample\Biz\SampleDataBiz.cs" />
     <Compile Include="Sample\Biz\SampleFileBiz.cs" />
+    <Compile Include="Sample\Controller\SampleAuth.cs" />
     <Compile Include="Sample\Controller\SampleDataController.cs" />
     <Compile Include="Sample\Controller\SampleFileController.cs" />
     <Compile Include="Sample\Model\SampleContext.cs" />
