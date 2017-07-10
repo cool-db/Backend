@@ -36,13 +36,13 @@ namespace Backend.Biz
                 context.Projects.Add(newProject);
                 context.SaveChanges();
 
-                var result = new
+                var data = new
                 {
                     projectId = newProject.Id,
                     projectName = newProject.Name,
                     projectDescription = newProject.Description,
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -70,11 +70,10 @@ namespace Backend.Biz
                 context.Projects.Remove(theProject);
                 context.SaveChanges();
 
-                var result = new
+                var data = new
                 {
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -103,13 +102,12 @@ namespace Backend.Biz
                 theProject.OwnerId = ownerIdTo;
                 context.SaveChanges();
 
-                var result = new
+                var data = new
                 {
                     projectId = theProject.Id,
                     ownerId = theProject.OwnerId,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -123,14 +121,13 @@ namespace Backend.Biz
 
                 var theProject = queryProject.Single();
 
-                var result = new
+                var data = new
                 {
                     projectId = theProject.Id,
                     projectName = theProject.Name,
                     projectDescription = theProject.Description,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -155,12 +152,11 @@ namespace Backend.Biz
                     });
                 }
 
-                var result = new
+                var data = new
                 {
                     projects,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -191,14 +187,13 @@ namespace Backend.Biz
                     : theProject.Description;
                 context.SaveChanges();
 
-                var result = new
+                var data = new
                 {
                     projectId = theProject.Id,
                     projectName = theProject.Name,
                     projectDiscription = theProject.Description,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -245,12 +240,11 @@ namespace Backend.Biz
                     });
                 }
 
-                var result = new
+                var data = new
                 {
                     members,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -294,12 +288,11 @@ namespace Backend.Biz
                     });
                 }
 
-                var result = new
+                var data = new
                 {
                     members,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -322,12 +315,11 @@ namespace Backend.Biz
                     });
                 }
 
-                var result = new
+                var data = new
                 {
                     members,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -346,11 +338,11 @@ namespace Backend.Biz
                     return Helper.Error(404, "未配置权限");
                 queryPermission.Single().Permission = (Permission) permission;
                 context.SaveChanges();
-                var result = new
+                var data = new
                 {
                     permission
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -390,12 +382,11 @@ namespace Backend.Biz
 
                 var progressList = Progress.GetProgerssList(projectId);
 
-                var result = new
+                var data = new
                 {
                     progressList,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -433,12 +424,11 @@ namespace Backend.Biz
 
                 var progressList = Progress.GetProgerssList(theProject.Id);
 
-                var result = new
+                var data = new
                 {
                     progressList,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -475,12 +465,11 @@ namespace Backend.Biz
 
                 var progressList = Progress.GetProgerssList(theProject.Id);
 
-                var result = new
+                var data = new
                 {
                     progressList,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -524,12 +513,11 @@ namespace Backend.Biz
                     context.SaveChanges();
                     var progressList = Progress.GetProgerssList(theProject.Id);
 
-                    var result = new
+                    var data = new
                     {
                         progressList,
-                        code = 200
                     };
-                    return Helper.BuildResult(result);
+                    return Helper.BuildResult(data);
                 }
                 return Helper.Error(417, "输入不合法");
             }
@@ -545,12 +533,11 @@ namespace Backend.Biz
 
                 var progressList = Progress.GetProgerssList(projectId);
 
-                var result = new
+                var data = new
                 {
                     progressList,
-                    code = 200
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
 
@@ -561,11 +548,11 @@ namespace Backend.Biz
                 var queryPermission = context.UserPermissons.Where(userPermisson =>
                     userPermisson.UserId == userId && userPermisson.ProjectId == projectId);
                 if (!queryPermission.Any()) return Helper.Error(404, "未配置权限");
-                var result = new
+                var data = new
                 {
                     permission = queryPermission.Single().Permission
                 };
-                return Helper.BuildResult(result);
+                return Helper.BuildResult(data);
             }
         }
     }
