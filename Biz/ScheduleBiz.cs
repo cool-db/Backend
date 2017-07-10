@@ -48,11 +48,11 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     members,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
                 
@@ -98,11 +98,11 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     members,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -127,11 +127,11 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data =  new
                 {
                     participators,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
         
