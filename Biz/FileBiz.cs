@@ -10,14 +10,17 @@ namespace Backend.Biz
 {
     public class FileBiz
     {
-        public static File GetFile(int FileId)
+        public static File GetFile(int fileId)
         {
             using (var context = new BackendContext())
             {
-                var theFile = (from file in context.File
-                    where file.Id == FileId
-                    select file).SingleOrDefault();
-                return theFile;
+                var queryFile = (from file in context.File
+                    where file.Id == fileId
+                    select file);
+//                if (!queryFile.Any())
+//                    return Helper.Error(404, "未找到文件");
+                
+                return queryFile.Single();
             }
         }
 
@@ -55,9 +58,17 @@ namespace Backend.Biz
         {
             using (var context = new BackendContext())
             {
-                var queryList = context.File.Where(file => file.TaskId == taskId);
-
-                return queryList;
+                var queryList = from file in context.File 
+                    where file.TaskId==taskId
+                    select new
+                    {
+                        file.Id,
+                        file.Name,
+                        file.UploadTime,
+                        file.UserId,
+                        file.TaskId
+                    };
+                return queryList.ToArray();
             }
         }
 

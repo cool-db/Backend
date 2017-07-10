@@ -11,6 +11,7 @@ namespace Backend.Controller
     public class FileController : ApiController
     {
         [HttpGet]
+        [Route("api/file")]
         public object GetFile(int FileId)
         {
             var file = FileBiz.GetFile(FileId);
@@ -20,12 +21,12 @@ namespace Backend.Controller
             {
                 FileName = file.Name
             };
-//            response.Content.Headers.ContentType = new MediaTypeHeaderValue(file.Type);
 
             return response;
         }
 
         [HttpPost]
+        [Route("api/file")]
         public object PostFile()
         {
             HttpContext.Current.Request.ContentEncoding=Encoding.UTF8;
@@ -33,12 +34,14 @@ namespace Backend.Controller
         }
         
         [HttpDelete]
+        [Route("api/file")]
         public object DeleteFile(object json)
         {
             return FileBiz.DeleteFile(json);
         }
         
         [HttpPut]
+        [Route("api/file")]
         public object RenameFile(object json)
         {
             return FileBiz.RenameFile(json);
