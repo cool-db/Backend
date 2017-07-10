@@ -80,19 +80,19 @@ namespace Backend.Controller
 
         #region permission
 
-//        [HttpGet]
-//        [Route("api/project/permission")]
-//        public object GetPermission(int userId, int projectId)
-//        {
-//            return ProjectBiz.GetPermission(userId, projectId);
-//        }
-//
-//        [HttpPost]
-//        [Route("api/project/permission")]
-//        public object UpdatePermission(int userId, int projectId)
-//        {
-//            return ProjectBiz.UpdatePermission(userId, projectId);
-//        }
+        [HttpGet]
+        [Route("api/project/permission")]
+        public object GetPermission(int userId, int projectId)
+        {
+            return ProjectBiz.GetPermission(userId, projectId);
+        }
+
+        [HttpPut]
+        [Route("api/project/permission")]
+        public object UpdatePermission(object json)
+        {
+            return ProjectBiz.UpdatePermission(json);
+        }
         
         #endregion
 

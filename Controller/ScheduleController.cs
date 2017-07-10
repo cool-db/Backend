@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Backend.Biz;
+using Backend.Model;
 
 namespace Backend.Controller
 {

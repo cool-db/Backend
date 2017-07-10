@@ -70,7 +70,7 @@ namespace Backend.Biz
                 queryProject.Single().Schedules.Add(newSchedule);
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
                     scheduleId = newSchedule.Id,
                     scheduleName = newSchedule.Name,
@@ -83,6 +83,8 @@ namespace Backend.Biz
                     participatorIds = ids,
                     code = 200
                 };
+
+                return Helper.BuildResult(data);
 
             }
         }
@@ -104,19 +106,16 @@ namespace Backend.Biz
                 var queryProject = context.Projects.Where(project => project.Id == querySchedule.Single().Id);
                 if (!queryProject.Any())
                     return Helper.Error(404, "删除日程所属项目不存在");
-                
-                if(!Helper.CheckPermission(queryProject.Single().Id, operatorId, true, OperationType.DELETE))
+
+                if (!Helper.CheckPermission(queryProject.Single().Id, operatorId, true, OperationType.DELETE))
                     return Helper.Error(401, "用户无操作权限");
-                
+
                 queryProject.Single().Schedules.Remove(theSchedule);
                 context.Schedules.Remove(theSchedule);
 
                 context.SaveChanges();
 
-                return new
-                {
-
-                };
+                return Helper.BuildResult(null);
             }
         }
         
@@ -163,7 +162,7 @@ namespace Backend.Biz
 
                 context.SaveChanges();
 
-                return new
+                var data =  new
                 {
                     scheduleId = theSchedule.Id,
                     scheduleName = theSchedule.Name,
@@ -175,6 +174,8 @@ namespace Backend.Biz
                     repeatWeekly = theSchedule.RepeatWeekly,
                     code = 200
                 };
+
+                return Helper.BuildResult(data);
             }
         }
         
@@ -216,11 +217,13 @@ namespace Backend.Biz
                  
                 }
 
-                return new
+                var data =  new
                 {
                     dataList,
                     code = 200
                 };
+
+                return Helper.BuildResult(data);
 
             }
         }
@@ -261,12 +264,13 @@ namespace Backend.Biz
                  
                 }
 
-                return new
+                var data = new
                 {
                     scheduleList,
                     code = 200
                 };
 
+                return Helper.BuildResult(data);
             }
         }
         
@@ -318,16 +322,16 @@ namespace Backend.Biz
                     ids.Add(participator.Id);
                 }
 
-                return new
+                var data = new
                 {
                     ids,
                     code = 200
                 };
 
+                return Helper.BuildResult(data);
             }
         }
         
-
         public static object DeleteParticipator(object json)
         {
             var body = Helper.DecodeToObject(json);
@@ -378,11 +382,13 @@ namespace Backend.Biz
                     ids.Add(user.Id);
                 }
 
-                return new
+                var data = new
                 {
                     ids,
                     code = 200
                 };
+                
+                return Helper.BuildResult(data);
             }
         }
         
@@ -413,12 +419,13 @@ namespace Backend.Biz
                  
                 }
 
-                return new
+                var data = new
                 {
                     participatorList,
                     code = 200
                 };
 
+                return Helper.BuildResult(data);
             }
         }
     }

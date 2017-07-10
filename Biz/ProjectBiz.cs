@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Backend.Model;
 using System.Linq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 
@@ -37,13 +36,13 @@ namespace Backend.Biz
                 context.Projects.Add(newProject);
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
                     projectId = newProject.Id,
                     projectName = newProject.Name,
                     projectDescription = newProject.Description,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -71,10 +70,10 @@ namespace Backend.Biz
                 context.Projects.Remove(theProject);
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -103,12 +102,12 @@ namespace Backend.Biz
                 theProject.OwnerId = ownerIdTo;
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
                     projectId = theProject.Id,
                     ownerId = theProject.OwnerId,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -122,13 +121,13 @@ namespace Backend.Biz
 
                 var theProject = queryProject.Single();
 
-                return new
+                var data = new
                 {
                     projectId = theProject.Id,
                     projectName = theProject.Name,
                     projectDescription = theProject.Description,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -153,11 +152,11 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     projects,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -188,13 +187,13 @@ namespace Backend.Biz
                     : theProject.Description;
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
                     projectId = theProject.Id,
                     projectName = theProject.Name,
                     projectDiscription = theProject.Description,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -228,10 +227,6 @@ namespace Backend.Biz
                     return Helper.Error(404, "添加的用户不存在");
 
                 var theMember = queryMember.Single();
-
-                if (theProject.Users.Contains(theMember))
-                    return Helper.Error(417, "该参与者已存在");
-
                 theProject.Users.Add(theMember);
                 context.SaveChanges();
 
@@ -245,11 +240,11 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     members,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -277,10 +272,10 @@ namespace Backend.Biz
 
                 var queryMember = context.Users.Where(member => member.Id == memberId);
                 if (!queryMember.Any())
-                    return Helper.Error(404, "删除的用户不存在");
+                    return Helper.Error(404, "添加的用户不存在");
 
                 var theMember = queryMember.Single();
-                theProject.Users.Remove(theMember);
+                theProject.Users.Add(theMember);
                 context.SaveChanges();
 
                 var members = new List<object>();
@@ -293,11 +288,11 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     members,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -320,17 +315,35 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     members,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
-        public static object UpdatePermission(int userId, int projectId)
+        public static object UpdatePermission(object json)
         {
-            return null;
+            var body = Helper.Decode(json);
+            var projectId = int.Parse(body["projectId"]);
+            var userId = int.Parse(body["userId"]);
+            var permission = int.Parse(body["permission"]);
+
+            using (var context = new BackendContext())
+            {
+                var queryPermission = context.UserPermissons.Where(userPermisson =>
+                    userPermisson.UserId == userId && userPermisson.ProjectId == projectId);
+                if (!queryPermission.Any())
+                    return Helper.Error(404, "未配置权限");
+                queryPermission.Single().Permission = (Permission) permission;
+                context.SaveChanges();
+                var data = new
+                {
+                    permission
+                };
+                return Helper.BuildResult(data);
+            }
         }
 
         public static object CreateProgress(object json)
@@ -369,11 +382,11 @@ namespace Backend.Biz
 
                 var progressList = Progress.GetProgerssList(projectId);
 
-                return new
+                var data = new
                 {
                     progressList,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -411,11 +424,11 @@ namespace Backend.Biz
 
                 var progressList = Progress.GetProgerssList(theProject.Id);
 
-                return new
+                var data = new
                 {
                     progressList,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -452,11 +465,11 @@ namespace Backend.Biz
 
                 var progressList = Progress.GetProgerssList(theProject.Id);
 
-                return new
+                var data = new
                 {
                     progressList,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -500,11 +513,11 @@ namespace Backend.Biz
                     context.SaveChanges();
                     var progressList = Progress.GetProgerssList(theProject.Id);
 
-                    return new
+                    var data = new
                     {
                         progressList,
-                        code = 200
                     };
+                    return Helper.BuildResult(data);
                 }
                 return Helper.Error(417, "输入不合法");
             }
@@ -520,11 +533,26 @@ namespace Backend.Biz
 
                 var progressList = Progress.GetProgerssList(projectId);
 
-                return new
+                var data = new
                 {
                     progressList,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
+            }
+        }
+
+        public static object GetPermission(int userId, int projectId)
+        {
+            using (var context = new BackendContext())
+            {
+                var queryPermission = context.UserPermissons.Where(userPermisson =>
+                    userPermisson.UserId == userId && userPermisson.ProjectId == projectId);
+                if (!queryPermission.Any()) return Helper.Error(404, "未配置权限");
+                var data = new
+                {
+                    permission = queryPermission.Single().Permission
+                };
+                return Helper.BuildResult(data);
             }
         }
     }

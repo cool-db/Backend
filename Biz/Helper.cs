@@ -66,7 +66,6 @@ namespace Backend.Biz
 
         public static bool CheckPermission(int projectId, int userId, bool isOwner, OperationType type)
         {
-            
             if (isOwner)
                 return true;
 
@@ -86,7 +85,7 @@ namespace Backend.Biz
                     case OperationType.POST:
                     case OperationType.SPECIAL:
                         return true;
-                        
+
                     case OperationType.DELETE:
                     case OperationType.PUT:
                         if (permission != Permission.Participant)
@@ -97,6 +96,16 @@ namespace Backend.Biz
             }
 
             return false;
+        }
+
+        public static object BuildResult(object result, int code = 200, string message = "ok")
+        {
+            return new
+            {
+                result,
+                code,
+                message
+            };
         }
     }
 }

@@ -19,12 +19,12 @@ namespace Backend.Biz
                     return Helper.Error(401, "token错误");
                 var theUser = query.Single();
 
-                return new
+                var data = new
                 {
                     id = theUser.Id,
                     name = theUser.UserInfo.Name,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -48,13 +48,13 @@ namespace Backend.Biz
                 context.SaveChanges();
 
                 //返回
-                return new
+                var data = new
                 {
                     id = theUser.Id,
                     token = theUser.Token,
                     name = theUser.UserInfo.Name,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -75,10 +75,7 @@ namespace Backend.Biz
                 theUser.GenerateToken();
                 context.SaveChanges();
 
-                return new
-                {
-                    code = 200
-                };
+                return Helper.BuildResult("");
             }
         }
 
@@ -101,12 +98,12 @@ namespace Backend.Biz
                 context.Users.Add(newUser);
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
                     id = newUser.Id,
                     token = newUser.Token,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -121,17 +118,18 @@ namespace Backend.Biz
                 var theUser = query.Single();
 
                 if (token == "")
-                    return new
+                {
+                    var data2 = new
                     {
                         id = theUser.Id,
                         name = theUser.UserInfo.Name,
-                        code = 200
                     };
-
+                    return Helper.BuildResult(data2);
+                }
                 if (theUser.Token != token)
                     return Helper.Error(401, "token错误");
 
-                return new
+                var data = new
                 {
                     id = theUser.Id,
                     name = theUser.UserInfo.Name,
@@ -141,8 +139,8 @@ namespace Backend.Biz
                     job = theUser.UserInfo.Job,
                     website = theUser.UserInfo.Website,
                     birthday = theUser.UserInfo.Birthday,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -164,11 +162,11 @@ namespace Backend.Biz
                 theUser.GenerateToken();
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
                     token = theUser.Token,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -195,7 +193,7 @@ namespace Backend.Biz
                 info.Birthday = (body.ContainsKey("birthday")) ? Helper.ParseDateTime(body["birthday"]) : info.Birthday;
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
                     id = theUser.Id,
                     name = theUser.UserInfo.Name,
@@ -205,8 +203,8 @@ namespace Backend.Biz
                     job = theUser.UserInfo.Job,
                     website = theUser.UserInfo.Website,
                     birthday = theUser.UserInfo.Birthday,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
     }
