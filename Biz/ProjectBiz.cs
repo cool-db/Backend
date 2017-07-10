@@ -355,11 +355,14 @@ namespace Backend.Biz
                 var theProject = queryProject.Single();
                 if (!theProject.Users.Contains(theUser))
                     return Helper.Error(401, "该用户未参与该项目");
+                Console.WriteLine(1);
+
                 var newProgress = new Progress()
                 {
                     Name = progressName,
                     ProjectId = projectId,
-                    Order = context.Progresses.Max(progress => progress.Order) + 1
+                    Order = (context.Progresses.Any()) ? context.Progresses.Max(progress => progress.Order) + 1 : 1,
+                    OwnerId = userId
                 };
                 context.Progresses.Add(newProgress);
                 context.SaveChanges();
@@ -474,7 +477,7 @@ namespace Backend.Biz
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
                 if (!queryProject.Any())
                     return Helper.Error(417, "未找到该项目");
-               
+
                 var theUser = queryUser.Single();
                 var theProject = queryProject.Single();
 
