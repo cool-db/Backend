@@ -205,73 +205,98 @@ namespace Backend.Biz
             
             using (var context = new BackendContext())
             {
-                var scheduleName = body["scheduleName"].ToString();
+                var scheduleId = int.Parse(body["scheduleId"].ToString());
+
+                var querySchedule = context.Schedules.Where(schedule => schedule.Id == scheduleId);
+
+                if (!querySchedule.Any())
+                {
+                    return Helper.Error(404, "日程不存在");
+                }
+
+                var dataList = new List<object>();
                 
-                var scheduleContent = body["scheduleContent"].ToString();
-                
-                var location = body["location"].ToString();
-                var startTime = DateTime.Parse(body["startTime"].ToString());
-                var endTime = DateTime.Parse(body["endTime"].ToString());
-                var repeatDaily = bool.Parse(body["repeatDaily"].ToString());
-                var repeatWeekly = bool.Parse(body["repeatWeekly"].ToString()); 
-                var participatorIds = JArray.Parse(body["participatorIds"].ToString());  
-                var creatorId = int.Parse(body["creatorId"].ToString());
-                var projectId = int.Parse(body["projectId"].ToString());
-                
-                var users = new List<User>();
-                var ids = new List<int>();
-                foreach (var participatorId in participatorIds)
+                foreach (var content in querySchedule)
                 { 
-                    var id = int.Parse(participatorId.ToString());
-                    var queryUser = context.Users.Where(user => user.Id == id);
                     
-                    if (!queryUser.Any())
-                        return Helper.Error(401, "用户" + participatorId + "不存在");
+                    var ids = new List<int>();
+
+                    foreach (var user in content.Users)
+                    {
+                        ids.Add(user.Id);
+                    }
                     
-                    users.Add(queryUser.Single());
-                    
-                    ids.Add(id);
+                    dataList.Add(new
+                    {
+                        scheduleId = content.Id,
+                        scheduleName = content.Name,
+                        scheduleContent = content.Content,
+                        location = content.Location,
+                        startTime = content.StartTime,
+                        endTime = content.EndTime,
+                        repeatDaily = content.RepeatDaily,
+                        repeatWeekly = content.RepeatWeekly,
+                        participatorsId = ids
+                        
+                    });
                  
                 }
-                
-                //check permission
-                if (!Helper.CheckPermission(projectId, creatorId, true, OperationType.POST))
-                    return Helper.Error(401, "用户" + creatorId + "无操作权限");
-
-                var queryProject = context.Projects.Where(project => project.Id == projectId);
-                if (!queryProject.Any())
-                    return Helper.Error(401, "项目不存在");
-                
-
-                //var users = participatorIds.Select(participatorId => context.Users.Single(user => user.Id == int.Parse(participatorId))).ToList();
-                var newSchedule = new Schedule
-                {
-                    Users = users,
-                    Content = scheduleContent,
-                    EndTime = endTime,
-                    StartTime = startTime,
-                    Location = location,
-                    Name = scheduleName,
-                    OwerId = creatorId,
-                    RepeatDaily = repeatDaily,
-                    RepeatWeekly = repeatWeekly,
-                    ProjectId = projectId
-                };
-                context.Schedules.Add(newSchedule);
-                queryProject.Single().Schedules.Add(newSchedule);
-                context.SaveChanges();
 
                 return new
                 {
-                    scheduleId = newSchedule.Id,
-                    scheduleName = newSchedule.Name,
-                    scheduleContent = newSchedule.Content,
-                    location = newSchedule.Location,
-                    startTime = newSchedule.StartTime,
-                    endTime = newSchedule.EndTime,
-                    repeatDaily = newSchedule.RepeatDaily,
-                    repeatWeekly = newSchedule.RepeatWeekly,
-                    participatorIds = ids,
+                    dataList,
+                    code = 200
+                };
+
+            }
+        }
+        
+        public static object GetScheduleList(object json)
+        {
+            var body = Helper.DecodeToObject(json);
+            
+            using (var context = new BackendContext())
+            {
+                var scheduleId = int.Parse(body["scheduleId"].ToString());
+
+                var querySchedule = context.Schedules.Where(schedule => schedule.Id == scheduleId);
+
+                if (!querySchedule.Any())
+                {
+                    return Helper.Error(404, "日程不存在");
+                }
+
+                var dataList = new List<object>();
+                
+                foreach (var content in querySchedule)
+                { 
+                    
+                    var ids = new List<int>();
+
+                    foreach (var user in content.Users)
+                    {
+                        ids.Add(user.Id);
+                    }
+                    
+                    dataList.Add(new
+                    {
+                        scheduleId = content.Id,
+                        scheduleName = content.Name,
+                        scheduleContent = content.Content,
+                        location = content.Location,
+                        startTime = content.StartTime,
+                        endTime = content.EndTime,
+                        repeatDaily = content.RepeatDaily,
+                        repeatWeekly = content.RepeatWeekly,
+                        participatorsId = ids
+                        
+                    });
+                 
+                }
+
+                return new
+                {
+                    dataList,
                     code = 200
                 };
 

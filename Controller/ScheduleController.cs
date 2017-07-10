@@ -25,5 +25,12 @@ namespace Backend.Controller
         {
             return ScheduleBiz.UpdateSchedule(json);
         }
+        
+        [HttpGet]
+        [Route("api/schedule/")]
+        public object GetSchedule(object json)
+        {
+            return ScheduleBiz.GetSchedule(json);
+        }
     }
 }
