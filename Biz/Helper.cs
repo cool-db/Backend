@@ -97,5 +97,15 @@ namespace Backend.Biz
 
             return false;
         }
+
+        public static object BuildResult(object result)
+        {
+            return new
+            {
+                result,
+                code = 200,
+                message = "ok"
+            };
+        }
     }
 }
