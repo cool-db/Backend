@@ -227,22 +227,22 @@ namespace Backend.Biz
                     return Helper.Error(404, "添加的用户不存在");
 
                 var theMember = queryMember.Single();
-                theProject.Users.Add(theMember);
-                context.SaveChanges();
-
-                var members = new List<object>();
-                foreach (var member in theProject.Users)
+                if (!theProject.Users.Contains(theMember))
                 {
-                    members.Add(new
-                    {
-                        id = member.Id,
-                        name = member.UserInfo.Name
-                    });
+                    theProject.Users.Add(theMember);
+                    context.SaveChanges();
                 }
+
+                var members = (from theProjectUser in theProject.Users
+                    select new
+                    {
+                        theProjectUser.Id,
+                        theProjectUser.UserInfo.Name
+                    }).ToArray();
 
                 var data = new
                 {
-                    members,
+                    members
                 };
                 return Helper.BuildResult(data);
             }
