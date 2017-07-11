@@ -36,6 +36,7 @@ namespace Backend.Biz
         }
 
         public static List<object> DecodeToList(object json)
+
         {
             return JsonConvert.DeserializeObject<List<object>>(json.ToString());
         }

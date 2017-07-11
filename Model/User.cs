@@ -35,7 +35,6 @@ namespace Backend.Model
         [Index(IsUnique = true)]
         public string Token { get; set; }
 
-
         public virtual UserInfo UserInfo { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }

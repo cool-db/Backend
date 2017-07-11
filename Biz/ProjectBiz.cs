@@ -296,7 +296,7 @@ namespace Backend.Biz
             }
         }
 
-        public static object GetMemberList(int projectId)
+        public static object MemberList(int projectId)
         {
             using (var context = new BackendContext())
             {

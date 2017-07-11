@@ -72,7 +72,8 @@ namespace Backend.Controller
         [Route("api/project/member/list")]
         public object GetMemberList(int projectId)
         {
-            return ProjectBiz.GetMemberList(projectId);
+            //return ProjectBiz.GetMemberList(projectId);
+            return 0;
         }
 
         #endregion
@@ -131,6 +132,7 @@ namespace Backend.Controller
         {
             return ProjectBiz.GetProgressList(projectId);
         }
+        
 
         #endregion
     }
