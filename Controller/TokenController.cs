@@ -14,6 +14,8 @@ namespace Backend.Controller
     public class TokenController : ApiController
     {
         // THis is naive endpoint for demo, it should use Basic authentication to provdie token or POST request
+        [HttpGet]
+        [Route("api/token")]
         [AllowAnonymous]
         public string Get(string username, string password)
         {
@@ -29,6 +31,20 @@ namespace Backend.Controller
         {
             // should check in the database
             return true;
+        }
+        
+        // THis is naive endpoint for demo, it should use Basic authentication to provdie token or POST request
+        [HttpGet]
+        [Route("api/token2")]
+        [JwtAuthentication]
+        public string Get2(string username, string password)
+        {
+            if (CheckUser(username, password))
+            {
+                return JwtManager.GenerateToken(username);
+            }
+
+            throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
     }
 }

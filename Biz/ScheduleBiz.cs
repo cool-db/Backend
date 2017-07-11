@@ -102,7 +102,7 @@ namespace Backend.Biz
                     return Helper.BuildResult(null, 404, "删除日程不存在");
                 var theSchedule = querySchedule.Single();
 
-                var queryProject = context.Projects.Where(project => project.Id == querySchedule.Single().Id);
+                var queryProject = context.Projects.Where(project => project.Id == theSchedule.ProjectId);
                 if (!queryProject.Any())
                     return Helper.BuildResult(null, 404, "删除日程所属项目不存在");
 
