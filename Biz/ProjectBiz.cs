@@ -18,11 +18,11 @@ namespace Backend.Biz
             using (var context = new BackendContext())
             {
                 var ownerId = int.Parse(body["ownerId"]);
-                var ownerToken = body["ownerToken"];
+               // var ownerToken = body["ownerToken"];
                 var projectName = body["projectName"];
                 var projectDescription = body["projectDescription"];
 
-                var query = context.Users.Where(user => user.Id == ownerId && user.Token == ownerToken);
+                var query = context.Users.Where(user => user.Id == ownerId );
                 if (!query.Any())
                     return Helper.Error(401, "token错误");
 
@@ -32,6 +32,7 @@ namespace Backend.Biz
                     Description = projectDescription,
                     OwnerId = ownerId
                 };
+                
                 newProject.Users.Add(query.Single());
                 context.Projects.Add(newProject);
                 context.SaveChanges();

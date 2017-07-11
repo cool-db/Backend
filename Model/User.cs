@@ -25,6 +25,7 @@ namespace Backend.Model
 
         [Required]
         [MaxLength(20)]
+       // [Index] todo
         public string Email { get; set; }
 
         [Required]

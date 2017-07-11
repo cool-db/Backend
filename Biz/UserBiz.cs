@@ -48,13 +48,27 @@ namespace Backend.Biz
                 context.SaveChanges();
 
                 //返回
-                var data = new
+                if (theUser.UserInfo != null)
                 {
-                    id = theUser.Id,
-                    token = theUser.Token,
-                    name = theUser.UserInfo.Name,
-                };
-                return Helper.BuildResult(data);
+                    var data = new
+                    {
+                        id = theUser.Id,
+                        token = theUser.Token,
+                        name = theUser.UserInfo.Name//todo
+                    };
+                    return Helper.BuildResult(data);
+                }
+                else
+                {
+                    var data = new
+                    {
+                        id = theUser.Id,
+                        token = theUser.Token,
+                    };
+                    return Helper.BuildResult(data);
+                }
+               
+                
             }
         }
 
@@ -84,6 +98,7 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var email = body["email"];
             var password = body["password"];
+            //todo
 
             using (var context = new BackendContext())
             {
@@ -94,8 +109,11 @@ namespace Backend.Biz
                 {
                     Email = email,
                     Password = password,
+                    
                 };
                 context.Users.Add(newUser);
+
+
                 context.SaveChanges();
 
                 var data = new
@@ -103,6 +121,8 @@ namespace Backend.Biz
                     id = newUser.Id,
                     token = newUser.Token,
                 };
+                
+                
                 return Helper.BuildResult(data);
             }
         }
