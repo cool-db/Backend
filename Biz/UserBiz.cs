@@ -94,10 +94,13 @@ namespace Backend.Biz
                 {
                     Email = email,
                     Password = password,
+                    UserInfo = new UserInfo()
+                    {
+                        Name = ""
+                    }
                 };
                 context.Users.Add(newUser);
                 context.SaveChanges();
-
                 var data = new
                 {
                     id = newUser.Id,
