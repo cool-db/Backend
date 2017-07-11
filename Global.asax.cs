@@ -13,7 +13,7 @@ namespace Backend
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
-            config.Filters.Add(new AuthorizeAttribute());
+            //config.Filters.Add(new AuthorizeAttribute());
             
             config.Formatters.XmlFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("multipart/form-data"));
             config.Formatters.XmlFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("image/png"));
