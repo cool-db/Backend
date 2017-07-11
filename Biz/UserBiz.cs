@@ -95,9 +95,6 @@ namespace Backend.Biz
                     Email = email,
                     Password = password,
                     UserInfo = new UserInfo()
-                    {
-                        Name = ""
-                    }
                 };
                 context.Users.Add(newUser);
                 context.SaveChanges();
