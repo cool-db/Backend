@@ -26,6 +26,13 @@ namespace Backend.Controller
             return TaskBiz.GetCommentList(taskId);
         }
         
+        [HttpPost]
+        [Route("api/task")]
+        public object CreateTask(object json)
+        {
+            return TaskBiz.CreateTask(json);
+        }
+        
         [HttpDelete]
         [Route("api/task")]
         public object DeleteTask(object json)

@@ -65,11 +65,11 @@ namespace Backend.Biz
                 }
 
                 context.Tasks.Add(newTask);
-                context.SaveChanges(); 
-                
-                
+                context.SaveChanges();
 
-                return new
+
+
+                var data = new
                 {
                     taskId = newTask.Id,
                     projectId = newTask.Progress.ProjectId,
@@ -82,8 +82,9 @@ namespace Backend.Biz
                     comments = newTask.Comments,
 //                    files,//to do
                     ddl = newTask.Ddl,
-                    code = 200
                 };
+                
+                return Helper.BuildResult(data);
             }
         }
         
@@ -122,10 +123,7 @@ namespace Backend.Biz
                 context.Tasks.Remove(theTask);
                 context.SaveChanges();
 
-                return new
-                {
-                    code = 200
-                };
+                return Helper.BuildResult("");
             }
         }
         
@@ -163,11 +161,11 @@ namespace Backend.Biz
                 }
                 
 
-                return new
+                var data = new
                 {
                     tasks,
-                    code = 200
-                };
+                    
+                };return Helper.BuildResult(data);
             }
         }
         
@@ -194,7 +192,7 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     taskId = theTask.Id,
                     name = theTask.Name,
@@ -207,8 +205,8 @@ namespace Backend.Biz
                     files = theTask.Files,
                     subtasks = theTask.Subtasks,
                     ddl = theTask.Ddl,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
         
@@ -263,15 +261,15 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     taskId = theTask.Id,
                     executorId = theTask.OwnerId,
                     taskName = theTask.Name,
                     taskContent = theTask.Content,
                     memberIds,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
@@ -314,15 +312,15 @@ namespace Backend.Biz
                 
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
 //                    taskId = theTask.Id,
 //                    executorId = theTask.OwnerId,
 //                    taskName = theTask.Name,
 //                    taskContent = theTask.Content,
                     taskState = theTask.State,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
         
@@ -368,15 +366,15 @@ namespace Backend.Biz
                 theTask.Subtasks.Add(newSubTask);
                 context.SaveChanges(); 
                 
-                return new
+                var data = new
                 {
                     subtaskId = newSubTask.Id,
                     subtaskContent = newSubTask.Content,
                     taskId = newSubTask.TaskId,
                     state = newSubTask.State,
                     executorId = newSubTask.UserId,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
         
@@ -409,10 +407,7 @@ namespace Backend.Biz
                 context.Subtasks.Remove(theSubtask);
                 context.SaveChanges();
 
-                return new
-                {
-                    code = 200
-                };
+                return Helper.BuildResult("");
             }
         }
         
@@ -443,15 +438,15 @@ namespace Backend.Biz
                 
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
                     subtaskId = theSubtask.Id,
                     state = theSubtask.State,
                     taskId = theSubtask.Task.Id,
                     subtaskContent = theSubtask.Content,
                     executorId = subtaskExecutorId,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
         
@@ -490,11 +485,11 @@ namespace Backend.Biz
                 
                 context.SaveChanges();
 
-                return new
+                var data = new
                 {
                     subtaskState = theSubtask.State,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
         
@@ -509,15 +504,15 @@ namespace Backend.Biz
 
                 var theSubtask = querySubtask.Single();
                 
-                return new
+                var data = new
                 {
                     subtaskId = theSubtask.Id,
                     subtaskContent = theSubtask.Content,
                     state = theSubtask.State,
                     executorId = theSubtask.UserId,
                     
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
         
@@ -562,11 +557,11 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     members,
-                    code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
         
@@ -620,11 +615,12 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     members,
                     code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
         
@@ -647,11 +643,12 @@ namespace Backend.Biz
                     });
                 }
 
-                return new
+                var data = new
                 {
                     members,
                     code = 200
                 };
+                return Helper.BuildResult(data);
             }
         }
 
