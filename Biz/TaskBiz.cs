@@ -666,20 +666,20 @@ namespace Backend.Biz
                 var taskId = int.Parse(body["taskId"]);
                 var content = body["content"];
                 var time = DateTime.Parse(body["time"]);
-                var userId = int.Parse(body["userId"]);
+                var token = body["token"];
 
-                var taskQuery = context.Users.Where(user => user.Id == userId);
+                var taskQuery = context.Users.Where(user => user.Token == token);
                 if (!taskQuery.Any())
                     return Helper.Error(404, "任务不存在");
 
-                var userQuery = context.Users.Where(user => user.Id == userId);
+                var userQuery = context.Users.Where(user => user.Token == token);
                 if (!userQuery.Any())
-                    return Helper.Error(404, "用户不存在");
+                    return Helper.Error(401, "token错误");
 
                 var newComment = new Comment
                 {
                     TaskId = taskId,
-                    UserId = userId,
+                    UserId = userQuery.Single().Id,
                     Content = content,
                     Time = time
                 };
@@ -713,10 +713,14 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var commentId = int.Parse(body["commentId"]);
             var taskId = int.Parse(body["taskId"]);
-            var userId = int.Parse(body["userId"]);
+            var token = body["token"];
 
             using (var context = new BackendContext())
             {
+                var userQuery = context.Users.Where(user => user.Token == token);
+                if (!userQuery.Any())
+                    return Helper.Error(401, "token错误");
+                
                 var queryComment = context.Comments.Where(comment => comment.Id == commentId);
                 if (!queryComment.Any())
                     return Helper.Error(404, "评论不存在");
@@ -726,6 +730,7 @@ namespace Backend.Biz
                     return Helper.Error(404, "任务不存在");
 
                 var theComment = queryComment.Single();
+                var userId = userQuery.Single().Id
                 if (theComment.UserId != userId)
                     return Helper.Error(401, "该用户未发表该评论");
 
@@ -745,10 +750,14 @@ namespace Backend.Biz
             }
         }
 
-        public static object GetCommentList(int taskId)
+        public static object GetCommentList(int taskId, String token)
         {
             using (var context = new BackendContext())
             {
+                var userQuery = context.Users.Where(user => user.Token == token);
+                if (!userQuery.Any())
+                    return Helper.Error(401, "token错误");
+                
                 var queryTask = context.Tasks.Where(task => task.Id == taskId);
                 if (!queryTask.Any())
                     return Helper.Error(404, "任务不存在");
@@ -773,6 +782,5 @@ namespace Backend.Biz
             }
         }
         
-
     }
 }
