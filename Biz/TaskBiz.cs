@@ -523,12 +523,13 @@ namespace Backend.Biz
         
         public static object AddMember(object json)
         {
-            var body = JObject.Parse(json.ToString());
-            var taskId = int.Parse(body["taskId"].ToString());
-            var participatorIds = JArray.Parse(body["participatorIds"].ToString());
+
 
             using (var context = new BackendContext())
-            {
+            {            
+                var body = JObject.Parse(json.ToString());
+                var taskId = int.Parse(body["taskId"].ToString());
+                var participatorIds = JArray.Parse(body["participatorIds"].ToString());
                 var queryTask = context.Tasks.Where(task => task.Id == taskId);
                 if (!queryTask.Any())
                     return Helper.Error(404, "任务不存在");
@@ -558,7 +559,7 @@ namespace Backend.Biz
                     members.Add(new
                     {
                         id = member.Id,
-                        name = member.UserInfo.Name
+//                        name = member.UserInfo.Name
                     });
                 }
 
@@ -728,6 +729,14 @@ namespace Backend.Biz
                 if (theComment.UserId != userId)
                     return Helper.Error(401, "该用户未发表该评论");
 
+                var pid = queryTask.Single().ProgressId;
+                var queryProjects = context.Progresses.Where(progress => progress.Id == pid);
+                var ownerId = queryProjects.Single().OwnerId;
+                if (!Helper.CheckPermission(queryProjects.Single().ProjectId, userId, ownerId == userId, OperationType.DELETE))
+                {
+                    return Helper.Error(403, "该用户未拥有权限");
+                }
+                
                 context.Comments.Remove(theComment);
                 context.SaveChanges();
 
