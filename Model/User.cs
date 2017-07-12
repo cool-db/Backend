@@ -25,13 +25,14 @@ namespace Backend.Model
 
         [Required]
         [MaxLength(20)]
+        [Index]
         public string Email { get; set; }
 
         [Required]
         [MaxLength(20)]
         public string Password { get; set; }
 
-        [MaxLength(20)]
+        [MaxLength(100)]
         [Index(IsUnique = true)]
         public string Token { get; set; }
 

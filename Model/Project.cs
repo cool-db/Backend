@@ -15,6 +15,7 @@ namespace Backend.Model
             Users = new List<User>();
             ProjectOperations = new List<ProjectOperation>();
             UserPermissons = new List<UserPermisson>();
+            Files = new List<File>();
         }
         
         public int Id { get; set; }
@@ -34,6 +35,7 @@ namespace Backend.Model
         public virtual ICollection<User> Users { get; set; } //项目成员
         public virtual ICollection<ProjectOperation> ProjectOperations { get; set; }
         public virtual ICollection<UserPermisson> UserPermissons { get; set; }
+        public virtual ICollection<File> Files { get; set; }
         
     }
 }

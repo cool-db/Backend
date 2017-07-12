@@ -52,7 +52,7 @@ namespace Backend.Biz
                 {
                     id = theUser.Id,
                     token = theUser.Token,
-                    name = theUser.UserInfo.Name,
+                    //name = theUser.UserInfo.Name,
                 };
                 return Helper.BuildResult(data);
             }
