@@ -14,6 +14,8 @@ namespace Backend.Biz
 
             using (var context = new BackendContext())
             {
+                if (token == "")
+                    return Helper.Error(401, "token错误");
                 var query = context.Users.Where(user => user.Token == token);
                 if (!query.Any())
                     return Helper.Error(401, "token错误");
