@@ -45,9 +45,9 @@ namespace Backend.Controller
 
         [HttpGet]
         [Route("api/project/list")]
-        public object GetList(int ownerId, string ownerToken)
+        public object GetList(int ownerId)
         {
-            return ProjectBiz.GetList(ownerId, ownerToken);
+            return ProjectBiz.GetList(ownerId);
         }
 
         #endregion

@@ -27,7 +27,8 @@ namespace Backend.Model
         [Required]
         [MaxLength(100)]
         public string Description { get; set; }
-
+        
+        //todo FK user
         public int OwnerId { get; set; }//创建者
         
         public virtual ICollection<Progress> Progresses { get; set; }

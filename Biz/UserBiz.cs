@@ -51,7 +51,7 @@ namespace Backend.Biz
                 var data = new
                 {
                     id = theUser.Id,
-                    token = theUser.Token,
+                    //token = theUser.Token,
                     //name = theUser.UserInfo.Name,
                 };
                 return Helper.BuildResult(data);
@@ -62,11 +62,11 @@ namespace Backend.Biz
         {
             var body = Helper.Decode(json);
             var id = int.Parse(body["id"]);
-            var token = body["token"];
+            //var token = body["token"];
 
             using (var context = new BackendContext())
             {
-                var query = context.Users.Where(user => user.Id == id && user.Token == token);
+                var query = context.Users.Where(user => user.Id == id /*&& user.Token == token*/);
 
                 if (!query.Any())
                     return Helper.Error(401, "token错误");
@@ -89,7 +89,7 @@ namespace Backend.Biz
             {
                 if (context.Users.Any(user => user.Email == email))
                     return Helper.Error(401, "该email已注册");
-
+                
                 var newUser = new User
                 {
                     Email = email,
@@ -112,13 +112,13 @@ namespace Backend.Biz
                 var data = new
                 {
                     id = newUser.Id,
-                    token = newUser.Token,
+                   // token = newUser.Token,
                 };
                 return Helper.BuildResult(data);
             }
         }
 
-        public static object GetInfo(int id, string token)
+        public static object GetInfo(int id)
         {
             using (var context = new BackendContext())
             {
@@ -127,18 +127,6 @@ namespace Backend.Biz
                     return Helper.Error(404, "id不存在");
 
                 var theUser = query.Single();
-
-                if (token == "")
-                {
-                    var data2 = new
-                    {
-                        id = theUser.Id,
-                        name = theUser.UserInfo.Name,
-                    };
-                    return Helper.BuildResult(data2);
-                }
-                if (theUser.Token != token)
-                    return Helper.Error(401, "token错误");
 
                 var data = new
                 {
@@ -175,7 +163,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    token = theUser.Token,
+                    //token = theUser.Token,
                 };
                 return Helper.BuildResult(data);
             }
@@ -185,11 +173,10 @@ namespace Backend.Biz
         {
             var body = Helper.Decode(json);
             var id = int.Parse(body["id"]);
-            var token = body["token"];
 
             using (var context = new BackendContext())
             {
-                var query = context.Users.Where(user => user.Id == id && user.Token == token);
+                var query = context.Users.Where(user => user.Id == id );
                 if (!query.Any())
                     return Helper.Error(401, "token错误");
 

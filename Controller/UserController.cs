@@ -43,9 +43,9 @@ namespace Backend.Controller
         
         [HttpGet]
         [Route("api/user")]
-        public object GetInfo(int id, string token="")
+        public object GetInfo(int id)
         {
-            return UserBiz.GetInfo(id, token);
+            return UserBiz.GetInfo(id);
         }
         
         
