@@ -32,20 +32,21 @@ namespace Backend.Model
         public static object GetProgerssList(int projectId)
         {
             using (var context = new BackendContext())
-
             {
                 var progressList = new List<object>();
 
-                var query = context.Progresses.Where(progress => progress.ProjectId == projectId);
-
+                var query = from progress in context.Progresses
+                    where progress.ProjectId == projectId
+                          orderby progress.Order
+                    select progress;
+                              
+//                var query = context.Progresses.Where(progress => progress.ProjectId == projectId);
                 foreach (var progress in query)
                 {
                     progressList.Add(new
                     {
                         id = progress.Id,
-
                         name = progress.Name,
-
                         order = progress.Order
                     });
                 }
