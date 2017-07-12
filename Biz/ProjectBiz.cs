@@ -9,8 +9,24 @@ namespace Backend.Biz
 {
     public class ProjectBiz
     {
-        
-        
+       
+        public static void RecordOperation(int userId, int projectId , string content)
+        {
+            using (var context = new BackendContext())
+            {
+                var user = context.Users.Where(u => u.Id == userId).Single();
+
+                context.ProjectOperations.Add(new ProjectOperation()
+                {
+                    Content = "用户 " + user.Email + " "+ content,
+                    ProjectId = projectId,
+                    UserId = userId,
+                    Time = DateTime.Now
+                });
+                context.SaveChanges();
+            }
+        }
+
         
         #region project
 
@@ -43,6 +59,8 @@ namespace Backend.Biz
                 });
                 context.Projects.Add(newProject);
                 context.SaveChanges();
+                
+                RecordOperation(ownerId, newProject.Id, "创建新项目");
 
                 var data = new
                 {
@@ -108,6 +126,9 @@ namespace Backend.Biz
 
                 theProject.OwnerId = ownerIdTo;
                 context.SaveChanges();
+                
+                RecordOperation(ownerId, theProject.Id, "移交项目给用户 " + queryUserTo.Single().Email);
+
 
                 var data = new
                 {
@@ -166,7 +187,9 @@ namespace Backend.Biz
                     ? body["projectDiscription"]
                     : theProject.Description;
                 context.SaveChanges();
-
+                
+                RecordOperation(ownerId, projectId, "更新了项目信息");
+                
                 var data = new
                 {
                     projectId = theProject.Id,
@@ -249,6 +272,9 @@ namespace Backend.Biz
                         UserId = userId
                     });
                     context.SaveChanges();
+                    
+                    RecordOperation(userId,projectId,"增加了新成员 " + theMember.Email);
+
                 }
                 else
                 {
@@ -312,6 +338,8 @@ namespace Backend.Biz
                     context.UserPermissons.Remove(queryPermission2.Single());
                 theProject.Users.Remove(theMember);
                 context.SaveChanges();
+                
+                RecordOperation(userId,projectId,"删除了成员 " + theMember.Email);
 
                 var members = (from theProjectUser in theProject.Users
                     select new
@@ -412,6 +440,9 @@ namespace Backend.Biz
                 if (queryPermission2.Any())
                     queryPermission2.Single().Permission = (Permission) permission;
 
+                RecordOperation(userId,projectId,"给成员 " + theMember.Email + " 提升了权限");
+
+                
                 var members = (from theProjectUser in theProject.Users
                     select new
                     {
@@ -466,6 +497,9 @@ namespace Backend.Biz
                 };
                 context.Progresses.Add(newProgress);
                 context.SaveChanges();
+                
+                RecordOperation(userId,projectId,"创建了新进程 " + progressName);
+
 
                 var progressList = Progress.GetProgerssList(projectId);
 
@@ -515,6 +549,8 @@ namespace Backend.Biz
                 }
                 context.Progresses.Remove(theProgress);
                 context.SaveChanges();
+                
+                RecordOperation(userId,theProject.Id,"创建了新进程 " + theProgress.Name);
 
                 var progressList = Progress.GetProgerssList(theProject.Id);
 
@@ -563,6 +599,8 @@ namespace Backend.Biz
 
                 theProgress.Name = progressName;
                 context.SaveChanges();
+                
+                RecordOperation(userId,theProject.Id,"更新了进程 " + theProgress.Name + "的名字");
 
                 var progressList = Progress.GetProgerssList(theProject.Id);
 
@@ -612,6 +650,10 @@ namespace Backend.Biz
                     }
 
                     context.SaveChanges();
+                    
+                    RecordOperation(userId,projectId,"更新了进程的顺序");
+
+                    
                     var progressList = Progress.GetProgerssList(theProject.Id);
 
                     var data = new
