@@ -9,23 +9,6 @@ namespace Backend.Biz
 {
     public class ProjectBiz
     {
-        public static void RecordOperation(int userId, int projectId , string content)
-        {
-            using (var context = new BackendContext())
-            {
-                context.ProjectOperations.Add(new ProjectOperation()
-                {
-                    Content = content,
-                    ProjectId = projectId,
-                    UserId = userId,
-                    Time = DateTime.Now
-                });
-                context.SaveChanges();
-            }
-            
-        }
-        
-        
         #region project
 
         public static object CreateProject(object json)
@@ -35,13 +18,12 @@ namespace Backend.Biz
             using (var context = new BackendContext())
             {
                 var ownerId = int.Parse(body["ownerId"]);
-                //var ownerToken = body["ownerToken"];
                 var projectName = body["projectName"];
                 var projectDescription = body["projectDescription"];
 
-                var query = context.Users.Where(user => user.Id == ownerId /*&& user.Token == ownerToken*/);
+                var query = context.Users.Where(user => user.Id == ownerId);
                 if (!query.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(404, "该用户不存在");
 
                 var newProject = new Project
                 {
@@ -50,19 +32,14 @@ namespace Backend.Biz
                     OwnerId = ownerId
                 };
                 newProject.Users.Add(query.Single());
-                context.Projects.Add(newProject);
-                
-                context.UserPermissons.Add(new UserPermisson()
+                newProject.UserPermissons.Add(new UserPermisson()
                 {
-                    UserId = ownerId,
+                    UserId = query.Single().Id,
                     ProjectId = newProject.Id,
-                    Project = newProject,
-                    Permission = Permission.Creator
+                    Permission = Permission.Creator,
                 });
-                
+                context.Projects.Add(newProject);
                 context.SaveChanges();
-
-                RecordOperation(ownerId, newProject.Id, "创建新项目");
 
                 var data = new
                 {
@@ -79,13 +56,12 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var projectId = int.Parse(body["projectId"]);
             var ownerId = int.Parse(body["ownerId"]);
-            //var ownerToken = body["ownerToken"];
 
             using (var context = new BackendContext())
             {
-                var queryUser = context.Users.Where(user => user.Id == ownerId /*&& user.Token == ownerToken*/);
+                var queryUser = context.Users.Where(user => user.Id == ownerId);
                 if (!queryUser.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(404, "用户不存在");
 
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
                 if (!queryProject.Any())
@@ -98,10 +74,7 @@ namespace Backend.Biz
                 context.Projects.Remove(theProject);
                 context.SaveChanges();
 
-                var data = new
-                {
-                };
-                return Helper.BuildResult(data);
+                return Helper.BuildResult(null);
             }
         }
 
@@ -111,13 +84,16 @@ namespace Backend.Biz
             var projectId = int.Parse(body["projectId"]);
             var ownerId = int.Parse(body["ownerId"]);
             var ownerIdTo = int.Parse(body["ownerIdTo"]);
-            //var ownerToken = body["ownerToken"];
 
             using (var context = new BackendContext())
             {
-                var queryUser = context.Users.Where(user => user.Id == ownerId /*&& user.Token == ownerToken*/);
+                var queryUser = context.Users.Where(user => user.Id == ownerId);
                 if (!queryUser.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(404, "用户不存在");
+
+                var queryUserTo = context.Users.Where(user => user.Id == ownerIdTo);
+                if (!queryUserTo.Any())
+                    return Helper.Error(404, "用户不存在");
 
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
                 if (!queryProject.Any())
@@ -127,11 +103,8 @@ namespace Backend.Biz
                 if (theProject.OwnerId != ownerId)
                     return Helper.Error(401, "该用户未拥有该项目");
 
-                //todo 组内移交
                 theProject.OwnerId = ownerIdTo;
                 context.SaveChanges();
-
-                RecordOperation(ownerId, theProject.Id, "移交项目");
 
                 var data = new
                 {
@@ -154,38 +127,10 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    projectId = theProject.Id,
-                    projectName = theProject.Name,
-                    projectDescription = theProject.Description,
-                };
-                return Helper.BuildResult(data);
-            }
-        }
-
-        public static object GetList(int ownerId)
-        {
-            using (var context = new BackendContext())
-            {
-                var queryUser = context.Users.Where(user => user.Id == ownerId );
-                if (!queryUser.Any())
-                    return Helper.Error(401, "token错误");
-
-                var theUser = queryUser.Single();
-
-                var projects = new List<object>();
-                foreach (var project in theUser.Projects)
-                {
-                    projects.Add(new
-                    {
-                        id = project.Id,
-                        name = project.Name,
-                        description = project.Description
-                    });
-                }
-
-                var data = new
-                {
-                    projects,
+                    id = theProject.Id,
+                    name = theProject.Name,
+                    description = theProject.Description,
+                    ownerId = theProject.OwnerId
                 };
                 return Helper.BuildResult(data);
             }
@@ -196,13 +141,12 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var projectId = int.Parse(body["projectId"]);
             var ownerId = int.Parse(body["ownerId"]);
-            //var ownerToken = body["ownerToken"];
 
             using (var context = new BackendContext())
             {
-                var queryUser = context.Users.Where(user => user.Id == ownerId /*&& user.Token == ownerToken*/);
+                var queryUser = context.Users.Where(user => user.Id == ownerId);
                 if (!queryUser.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(404, "用户不存在");
 
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
                 if (!queryProject.Any())
@@ -212,19 +156,46 @@ namespace Backend.Biz
                 if (theProject.OwnerId != ownerId)
                     return Helper.Error(401, "该用户未拥有该项目");
 
-                theProject.Name = (body.ContainsKey("projectName")) ? body["projectName"] : theProject.Name;
-                theProject.Description = (body.ContainsKey("projectDiscription"))
+                theProject.Name = (body.ContainsKey("projectName") && body["projectName"] != "")
+                    ? body["projectName"]
+                    : theProject.Name;
+                theProject.Description = (body.ContainsKey("projectDiscription") && body["projectDiscription"] != "")
                     ? body["projectDiscription"]
                     : theProject.Description;
                 context.SaveChanges();
-
-                RecordOperation(ownerId, projectId, "更新项目信息");
 
                 var data = new
                 {
                     projectId = theProject.Id,
                     projectName = theProject.Name,
                     projectDiscription = theProject.Description,
+                };
+                return Helper.BuildResult(data);
+            }
+        }
+
+        public static object GetList(int userId)
+        {
+            using (var context = new BackendContext())
+            {
+                var queryUser = context.Users.Where(user => user.Id == userId);
+                if (!queryUser.Any())
+                    return Helper.Error(401, "不存在该用户");
+
+                var theUser = queryUser.Single();
+
+                var projects = (from project in theUser.Projects
+                    select new
+                    {
+                        id = project.Id,
+                        name = project.Name,
+                        description = project.Description,
+                        ownerId = project.OwnerId
+                    }).ToArray();
+
+                var data = new
+                {
+                    projects,
                 };
                 return Helper.BuildResult(data);
             }
@@ -237,23 +208,28 @@ namespace Backend.Biz
         {
             var body = Helper.Decode(json);
             var projectId = int.Parse(body["projectId"]);
-            var ownerId = int.Parse(body["ownerId"]);
-            //var ownerToken = body["ownerToken"];
+            var userId = int.Parse(body["userId"]);
             var memberId = int.Parse(body["memberId"]);
 
             using (var context = new BackendContext())
             {
-                var queryUser = context.Users.Where(user => user.Id == ownerId /*&& user.Token == ownerToken*/);
+                var queryUser = context.Users.Where(user => user.Id == userId);
                 if (!queryUser.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(404, "用户不存在");
+                var theUser = queryUser.Single();
 
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
                 if (!queryProject.Any())
                     return Helper.Error(404, "项目不存在");
-
                 var theProject = queryProject.Single();
-                if (theProject.OwnerId != ownerId)
-                    return Helper.Error(401, "该用户未拥有该项目");
+
+                if (!theUser.Projects.Contains(theProject))
+                    return Helper.Error(401, "该用户未在这个项目");
+
+                var queryPermission = context.UserPermissons.Where(permission =>
+                    permission.ProjectId == projectId && permission.UserId == userId);
+                if (!queryPermission.Any() || queryPermission.Single().Permission == Permission.Participant)
+                    return Helper.Error(401, "该用户未拥有该项目管理权限");
 
                 var queryMember = context.Users.Where(member => member.Id == memberId);
                 if (!queryMember.Any())
@@ -263,24 +239,25 @@ namespace Backend.Biz
                 if (!theProject.Users.Contains(theMember))
                 {
                     theProject.Users.Add(theMember);
-                    theProject.UserPermissons.Add(new UserPermisson()
+                    theMember.UserPermissons.Add(new UserPermisson()
                     {
-                        UserId = theMember.Id,
-                        ProjectId = theProject.Id,
-                        Project = theProject,
-                        User =  theMember,
-                        Permission = Permission.Participant
+                        Permission = Permission.Participant,
+                        ProjectId = projectId,
+                        UserId = userId
                     });
                     context.SaveChanges();
-                    
-                    RecordOperation(ownerId,projectId,"增加新成员");
+                }
+                else
+                {
+                    return Helper.Error(400, "用户已存在");
                 }
 
                 var members = (from theProjectUser in theProject.Users
                     select new
                     {
-                        theProjectUser.Id,
-                        theProjectUser.UserInfo.Name
+                        id = theProjectUser.Id,
+                        name = theProjectUser.UserInfo.Name,
+                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId==projectId).Permission
                     }).ToArray();
 
                 var data = new
@@ -295,57 +272,61 @@ namespace Backend.Biz
         {
             var body = Helper.Decode(json);
             var projectId = int.Parse(body["projectId"]);
-            var ownerId = int.Parse(body["ownerId"]);
-            //var ownerToken = body["ownerToken"];
+            var userId = int.Parse(body["userId"]);
             var memberId = int.Parse(body["memberId"]);
 
             using (var context = new BackendContext())
             {
-                var queryUser = context.Users.Where(user => user.Id == ownerId /*&& user.Token == ownerToken*/);
+                var queryUser = context.Users.Where(user => user.Id == userId);
                 if (!queryUser.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(404, "用户不存在");
 
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
                 if (!queryProject.Any())
                     return Helper.Error(404, "项目不存在");
 
                 var theProject = queryProject.Single();
-                if (theProject.OwnerId != ownerId)
-                    return Helper.Error(401, "该用户未拥有该项目");
 
                 var queryMember = context.Users.Where(member => member.Id == memberId);
                 if (!queryMember.Any())
                     return Helper.Error(404, "删除的用户不存在");
-
                 var theMember = queryMember.Single();
+
+                var queryPermission1 = context.UserPermissons.Where(permission =>
+                    permission.ProjectId == projectId && permission.UserId == userId);
+                var queryPermission2 = context.UserPermissons.Where(permission =>
+                    permission.ProjectId == projectId && permission.UserId == memberId);
+                var permission1 = (queryPermission1.Any())
+                    ? queryPermission1.Single().Permission
+                    : Permission.Participant;
+                var permission2 = (queryPermission1.Any())
+                    ? queryPermission2.Single().Permission
+                    : Permission.Participant;
+                if (permission1 >= permission2)
+                    return Helper.Error(401, "权限不足");
+
+                if (queryPermission2.Any())
+                    context.UserPermissons.Remove(queryPermission2.Single());
                 theProject.Users.Remove(theMember);
-                //todo
-                theProject.UserPermissons.Remove(theProject.UserPermissons.Where(p => p.UserId == theMember.Id).Single());
-                
                 context.SaveChanges();
-                
-                RecordOperation(ownerId,projectId,"删除新成员");
 
-
-                var members = new List<object>();
-                foreach (var member in theProject.Users)
-                {
-                    members.Add(new
+                var members = (from theProjectUser in theProject.Users
+                    select new
                     {
-                        id = member.Id,
-                        name = member.UserInfo.Name
-                    });
-                }
+                        id = theProjectUser.Id,
+                        name = theProjectUser.UserInfo.Name,
+                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId==projectId).Permission
+                    }).ToArray();
 
                 var data = new
                 {
-                    members,
+                    members
                 };
                 return Helper.BuildResult(data);
             }
         }
 
-        public static object MemberList(int projectId)
+        public static object GetMemberList(int projectId)
         {
             using (var context = new BackendContext())
             {
@@ -354,48 +335,90 @@ namespace Backend.Biz
                     return Helper.Error(404, "项目不存在");
                 var theProject = queryProject.Single();
 
-                var members = new List<object>();
-                foreach (var member in theProject.Users)
-                {
-                    members.Add(new
+                var members = (from theProjectUser in theProject.Users
+                    select new
                     {
-                        id = member.Id,
-                        name = member.UserInfo.Name
-                    });
-                }
+                        id = theProjectUser.Id,
+                        name = theProjectUser.UserInfo.Name,
+                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId==projectId).Permission
+                    }).ToArray();
 
                 var data = new
                 {
-                    members,
+                    members
                 };
                 return Helper.BuildResult(data);
             }
         }
 
-        //todo userId 权限验证
+        public static object GetPermission(int userId, int projectId)
+        {
+            using (var context = new BackendContext())
+            {
+                var queryPermission = context.UserPermissons.Where(userPermisson =>
+                    userPermisson.UserId == userId && userPermisson.ProjectId == projectId);
+                if (!queryPermission.Any()) return Helper.Error(404, "未配置权限");
+                var data = new
+                {
+                    permission = queryPermission.Single().Permission
+                };
+                return Helper.BuildResult(data);
+            }
+        }
+
         public static object UpdatePermission(object json)
         {
             var body = Helper.Decode(json);
             var projectId = int.Parse(body["projectId"]);
             var userId = int.Parse(body["userId"]);
-            //var memberId = int.Parse(body[""])
+            var memberId = int.Parse(body["memberId"]);
             var permission = int.Parse(body["permission"]);
 
             using (var context = new BackendContext())
             {
-                var queryPermission = context.UserPermissons.Where(userPermisson =>
-                    userPermisson.UserId == userId && userPermisson.ProjectId == projectId);
-                if (!queryPermission.Any())
-                    return Helper.Error(404, "未配置权限");
-                queryPermission.Single().Permission = (Permission) permission;
-                context.SaveChanges();
-                
-                RecordOperation(userId,projectId,"提升权限");
+                if (permission == 0)
+                    return Helper.Error(401, "不能修改至最高权限");
+                var queryUser = context.Users.Where(user => user.Id == userId);
+                if (!queryUser.Any())
+                    return Helper.Error(404, "用户不存在");
 
-                
+                var queryProject = context.Projects.Where(project => project.Id == projectId);
+                if (!queryProject.Any())
+                    return Helper.Error(404, "项目不存在");
+
+                var theProject = queryProject.Single();
+
+                var queryMember = context.Users.Where(member => member.Id == memberId);
+                if (!queryMember.Any())
+                    return Helper.Error(404, "修改的用户不存在");
+                var theMember = queryMember.Single();
+
+                var queryPermission1 = context.UserPermissons.Where(p =>
+                    p.ProjectId == projectId && p.UserId == userId);
+                var queryPermission2 = context.UserPermissons.Where(p =>
+                    p.ProjectId == projectId && p.UserId == memberId);
+                var permission1 = (queryPermission1.Any())
+                    ? queryPermission1.Single().Permission
+                    : Permission.Participant;
+                var permission2 = (queryPermission1.Any())
+                    ? queryPermission2.Single().Permission
+                    : Permission.Participant;
+                if (permission1 >= permission2)
+                    return Helper.Error(401, "权限不足");
+
+                if (queryPermission2.Any())
+                    queryPermission2.Single().Permission = (Permission) permission;
+
+                var members = (from theProjectUser in theProject.Users
+                    select new
+                    {
+                        id = theProjectUser.Id,
+                        name = theProjectUser.UserInfo.Name
+                    }).ToArray();
+
                 var data = new
                 {
-                    permission
+                    members
                 };
                 return Helper.BuildResult(data);
             }
@@ -406,14 +429,13 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var projectId = int.Parse(body["projectId"]);
             var userId = int.Parse(body["userId"]);
-            //var userToken = body["userToken"];
             var progressName = body["progressName"];
 
             using (var context = new BackendContext())
             {
-                var queryUser = context.Users.Where(user => user.Id == userId /*&& user.Token == userToken*/);
+                var queryUser = context.Users.Where(user => user.Id == userId);
                 if (!queryUser.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(404, "用户不存在");
                 var theUser = queryUser.Single();
 
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
@@ -423,21 +445,24 @@ namespace Backend.Biz
                 var theProject = queryProject.Single();
                 if (!theProject.Users.Contains(theUser))
                     return Helper.Error(401, "该用户未参与该项目");
-                
 
+                var queryPermission = context.UserPermissons.Where(p =>
+                    p.ProjectId == projectId && p.UserId == userId);
+                if (queryPermission.Single().Permission == Permission.Participant)
+                {
+                    return Helper.Error(401, "权限不足");
+                }
                 var newProgress = new Progress()
                 {
                     Name = progressName,
                     ProjectId = projectId,
-                    Order = theProject.Progresses.Count + 1,
-                    OwnerId = userId,
-                    Project = theProject
+                    Order = (context.Progresses.Any(p => p.ProjectId == projectId))
+                        ? context.Progresses.Where(p => p.ProjectId == projectId).Max(p => p.Order) + 1
+                        : 1,
+                    OwnerId = userId
                 };
                 context.Progresses.Add(newProgress);
                 context.SaveChanges();
-                
-                RecordOperation(userId,projectId,"新建进程");
-
 
                 var progressList = Progress.GetProgerssList(projectId);
 
@@ -454,13 +479,12 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var progressId = int.Parse(body["progressId"]);
             var userId = int.Parse(body["userId"]);
-            //var userToken = body["userToken"];
 
             using (var context = new BackendContext())
             {
-                var queryUser = context.Users.Where(user => user.Id == userId /*&& user.Token == userToken*/);
+                var queryUser = context.Users.Where(user => user.Id == userId);
                 if (!queryUser.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(401, "用户不存在");
                 var theUser = queryUser.Single();
 
                 var queryProgress = context.Progresses.Where(progress => progress.Id == progressId);
@@ -472,7 +496,15 @@ namespace Backend.Biz
 
                 if (!theProject.Users.Contains(theUser))
                     return Helper.Error(401, "该用户未参与该项目");
-
+                
+                
+                var queryPermission = context.UserPermissons.Where(p =>
+                    p.ProjectId == theProject.Id && p.UserId == userId);
+                if (queryPermission.Single().Permission == Permission.Participant)
+                {
+                    return Helper.Error(401, "权限不足");
+                }
+                
                 foreach (var progress in context.Progresses)
                 {
                     if (progress.Order > theProgress.Order)
@@ -491,20 +523,18 @@ namespace Backend.Biz
             }
         }
 
-        
         public static object UpdateProgressName(object json)
         {
             var body = Helper.Decode(json);
             var progressId = int.Parse(body["progressId"]);
             var userId = int.Parse(body["userId"]);
-            var userToken = body["userToken"];
             var progressName = body["progressName"];
 
             using (var context = new BackendContext())
             {
-                var queryUser = context.Users.Where(user => user.Id == userId && user.Token == userToken);
+                var queryUser = context.Users.Where(user => user.Id == userId);
                 if (!queryUser.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(401, "用户不存在");
                 var theUser = queryUser.Single();
 
                 var queryProgress = context.Progresses.Where(progress => progress.Id == progressId);
@@ -516,7 +546,15 @@ namespace Backend.Biz
 
                 if (!theProject.Users.Contains(theUser))
                     return Helper.Error(401, "该用户未参与该项目");
-
+                
+                
+                var queryPermission = context.UserPermissons.Where(p =>
+                    p.ProjectId == theProject.Id && p.UserId == userId);
+                if (queryPermission.Single().Permission == Permission.Participant)
+                {
+                    return Helper.Error(401, "权限不足");
+                }
+                
                 if (string.IsNullOrWhiteSpace(progressName))
                     return Helper.Error(417, "名称为空");
 
@@ -596,21 +634,6 @@ namespace Backend.Biz
                 var data = new
                 {
                     progressList,
-                };
-                return Helper.BuildResult(data);
-            }
-        }
-
-        public static object GetPermission(int userId, int projectId)
-        {
-            using (var context = new BackendContext())
-            {
-                var queryPermission = context.UserPermissons.Where(userPermisson =>
-                    userPermisson.UserId == userId && userPermisson.ProjectId == projectId);
-                if (!queryPermission.Any()) return Helper.Error(404, "未配置权限");
-                var data = new
-                {
-                    permission = queryPermission.Single().Permission
                 };
                 return Helper.BuildResult(data);
             }

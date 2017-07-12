@@ -12,6 +12,7 @@ namespace Backend.Biz
             {
                 var body = Helper.Decode(json);
                 var isRebuild = bool.Parse(body["isRebuild"]);
+                Console.WriteLine(isRebuild);
                 if (isRebuild)
                     Database.SetInitializer(new DropCreateDatabaseAlways<BackendContext>());
 

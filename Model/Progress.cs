@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace Backend.Model
 {
@@ -33,24 +34,14 @@ namespace Backend.Model
         {
             using (var context = new BackendContext())
             {
-                var progressList = new List<object>();
-
-                var query = from progress in context.Progresses
+                return (from progress in context.Progresses
                     where progress.ProjectId == projectId
-                          orderby progress.Order
-                    select progress;
-                              
-//                var query = context.Progresses.Where(progress => progress.ProjectId == projectId);
-                foreach (var progress in query)
-                {
-                    progressList.Add(new
+                    select new
                     {
                         id = progress.Id,
                         name = progress.Name,
                         order = progress.Order
-                    });
-                }
-                return progressList;
+                    }).OrderBy(p => p.order).ToArray();
             }
         }
     }
