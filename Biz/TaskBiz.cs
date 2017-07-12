@@ -668,7 +668,7 @@ namespace Backend.Biz
                 var time = DateTime.Parse(body["time"]);
                 var token = body["token"];
 
-                var taskQuery = context.Users.Where(user => user.Token == token);
+                var taskQuery = context.Tasks.Where(task => task.Id == taskId);
                 if (!taskQuery.Any())
                     return Helper.Error(404, "任务不存在");
 
@@ -730,7 +730,7 @@ namespace Backend.Biz
                     return Helper.Error(404, "任务不存在");
 
                 var theComment = queryComment.Single();
-                var userId = userQuery.Single().Id
+                var userId = userQuery.Single().Id;
                 if (theComment.UserId != userId)
                     return Helper.Error(401, "该用户未发表该评论");
 
@@ -739,7 +739,7 @@ namespace Backend.Biz
                 var ownerId = queryProjects.Single().OwnerId;
                 if (!Helper.CheckPermission(queryProjects.Single().ProjectId, userId, ownerId == userId, OperationType.DELETE))
                 {
-                    return Helper.Error(403, "该用户未拥有权限");
+                    return Helper.Error(403, "该用户未拥有删除权限");
                 }
                 
                 context.Comments.Remove(theComment);

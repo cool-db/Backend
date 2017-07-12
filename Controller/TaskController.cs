@@ -24,7 +24,7 @@ namespace Backend.Controller
         [Route("api/task/comment/list")]
         public object GetCommentList(int taskId, String token)
         {
-            return TaskBiz.GetCommentList(taskId);
+            return TaskBiz.GetCommentList(taskId, token);
         }
         
         [HttpDelete]
