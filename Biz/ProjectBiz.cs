@@ -233,12 +233,19 @@ namespace Backend.Biz
                     context.SaveChanges();
                 }
 
-                var members = (from theProjectUser in theProject.Users
-                    select new
-                    {
-                        theProjectUser.Id,
-                        theProjectUser.UserInfo.Name
-                    }).ToArray();
+//                var members = (from theProjectUser in theProject.Users
+//                    select new
+//                    {
+//                        theProjectUser.Id,
+//                        theProjectUser.UserInfo.Name
+//                    }).ToArray();
+
+                var members = new List<object>();
+                foreach (var member in theProject.Users)
+                {
+                    members.Add(member.Id);
+                    members.Add(member.UserInfo.Name);
+                }
 
                 var data = new
                 {

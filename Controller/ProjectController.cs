@@ -70,10 +70,9 @@ namespace Backend.Controller
 
         [HttpGet]
         [Route("api/project/member/list")]
-        public object GetMemberList(int projectId)
+        public object MemberList(int projectId)
         {
-            //return ProjectBiz.GetMemberList(projectId);
-            return 0;
+            return ProjectBiz.MemberList(projectId);
         }
 
         #endregion
