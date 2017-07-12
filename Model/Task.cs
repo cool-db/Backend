@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using Backend.Biz;
 
 namespace Backend.Model
 {
@@ -33,6 +34,8 @@ namespace Backend.Model
         public bool State { get; set; }
         
         public int OwnerId { get; set; }//任务拥有者
+        
+        public Emergency EmergencyType { get; set; }
         
         public int ProgressId { get; set; }
         public virtual Progress Progress { get; set; }
