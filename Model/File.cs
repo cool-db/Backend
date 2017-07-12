@@ -28,6 +28,7 @@ namespace Backend.Model
         public virtual User User { get; set; } //上传文件者
         public virtual Project Project { get; set; }
         
+        
         public virtual ICollection<Task> Tasks { get; set; } //依附的任务
         
     }
