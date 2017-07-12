@@ -98,11 +98,11 @@ namespace Backend.Biz
             return false;
         }
 
-        public static object BuildResult(object result, int code = 200, string message = "ok")
+        public static object BuildResult(object data, int code = 200, string message = "ok")
         {
             return new
             {
-                result,
+                data,
                 code,
                 message
             };
