@@ -126,11 +126,11 @@ namespace Backend.Biz
             }
         }
 
-        public static object GetTaskList(int progectId, int userId)
+        public static object GetTaskList(int projectId, int userId)
         {
             using (var context = new BackendContext())
             {
-                var queryProgect = context.Projects.Where(progect => progect.Id == progectId);
+                var queryProgect = context.Projects.Where(progect => progect.Id == projectId);
                 if (!queryProgect.Any())
                     return Helper.Error(401, "项目错误");
 
@@ -154,7 +154,7 @@ namespace Backend.Biz
 
                 bool flag = userId == queryProgect.Single().OwnerId;
 
-                if (!Helper.CheckPermission(progectId, userId, flag, OperationType.GET))
+                if (!Helper.CheckPermission(projectId, userId, flag, OperationType.GET))
                 {
                     return Helper.Error(401, "无权限");
                 }
@@ -751,6 +751,52 @@ namespace Backend.Biz
                 };
                 return Helper.BuildResult(data);
             }
+        }
+
+        public static object ChangeProgress(object json)
+        {
+            var body = Helper.Decode(json);
+            var taskId = int.Parse(body["taskId"]);
+            
+            var progressIdTo = int.Parse(body["progressIdTo"]);
+
+            using (var context = new BackendContext())
+            {
+                var queryTask = context.Tasks.Where(task => task.Id == taskId);
+                
+                var progressId = queryTask.Single().ProgressId;
+                
+                var queryProgress = context.Progresses.Where(p => p.Id == progressId);
+                var queryProgressTo = context.Progresses.Where(p => p.Id == progressIdTo);
+                
+                if (!queryTask.Any())
+                    return Helper.Error(404, "任务不存在");
+
+                var theTask = queryTask.Single();
+                var theProgress = queryProgress.Single();
+                var theProgressTo = queryProgressTo.Single();
+
+                theTask.ProgressId = progressIdTo;
+                theProgress.Tasks.Remove(theTask);
+                theProgressTo.Tasks.Add(theTask);
+
+                context.SaveChanges();
+
+                var data = new
+                {
+                    name = theTask.Name,
+                    content = theTask.Content,
+                    ownerId = theTask.OwnerId,
+                    ddl = theTask.Ddl,
+                    emergencyType = theTask.EmergencyType,
+                    state = theTask.State,
+                    progressId = theTask.ProgressId
+                };
+
+                return Helper.BuildResult(data);
+
+            }
+
         }
     }
 }

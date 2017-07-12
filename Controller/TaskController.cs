@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using System.Web.Routing;
 using Backend.Biz;
 
 namespace Backend.Controller
@@ -123,5 +124,13 @@ namespace Backend.Controller
         {
             return TaskBiz.GetMemberList(taskId);
         }
+
+        [HttpPut]
+        [Route("api/task/order")]
+        public object ChangeProgress(object json)
+        {
+            return TaskBiz.ChangeProgress(json);
+        }
+        
     }
 }
