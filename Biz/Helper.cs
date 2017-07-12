@@ -7,6 +7,13 @@ using Newtonsoft.Json.Linq;
 
 namespace Backend.Biz
 {
+    public enum Emergency
+    {
+        Least,
+        Normal,
+        Most
+    }
+
     public enum OperationType
     {
         PUT,
@@ -120,7 +127,5 @@ namespace Backend.Biz
                 return query.Single().Id;
             }
         }
-        
-        
     }
 }
