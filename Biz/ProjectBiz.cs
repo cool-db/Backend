@@ -9,7 +9,6 @@ namespace Backend.Biz
 {
     public class ProjectBiz
     {
-       
         public static void RecordOperation(int userId, int projectId , string content)
         {
             using (var context = new BackendContext())
