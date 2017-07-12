@@ -41,7 +41,7 @@ namespace Backend.Biz
                     Content = bytes,
                     UploadTime = DateTime.Now,
                     UserId = userId,
-                    TaskId = taskId
+//                    TaskId = taskId
                 };
                 context.File.Add(newFile);
                 context.SaveChanges();
@@ -59,14 +59,14 @@ namespace Backend.Biz
             using (var context = new BackendContext())
             {
                 var queryList = from file in context.File 
-                    where file.TaskId==taskId
+//                    where file.TaskId==taskId
                     select new
                     {
                         file.Id,
                         file.Name,
                         file.UploadTime,
                         file.UserId,
-                        file.TaskId
+//                        file.TaskId
                     };
                 return queryList.ToArray();
             }
