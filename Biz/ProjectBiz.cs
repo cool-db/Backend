@@ -9,9 +9,6 @@ namespace Backend.Biz
 {
     public class ProjectBiz
     {
-        
-        
-        
         #region project
 
         public static object CreateProject(object json)

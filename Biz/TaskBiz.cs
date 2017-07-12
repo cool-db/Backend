@@ -13,57 +13,35 @@ namespace Backend.Biz
         {
             //老毕 我把你代码改了
             var body = Helper.DecodeToObject(json);
+            var name = body["name"].ToString();
+            var progressId = int.Parse(body["progressId"].ToString());
+            var creatorId = int.Parse(body["creatorId"].ToString());
+            var content = body["content"].ToString();
 
             using (var context = new BackendContext())
             {
-                var name = body["name"].ToString();
-                var progressId = int.Parse(body["progressId"].ToString());
-                var creatorId = int.Parse(body["creatorId"].ToString());
-                var content = body["content"].ToString();
-
-                // var content = body["content"].ToString();
-                // var memberIds = JArray.Parse(body["memberId"].ToString());
-                // var files = JArray.Parse(body["file"].ToString());
-                // if (body["file"] != null)
-                // {
-                //     Console.WriteLine("the problem is: {0} ");
-                // }
-                // var files = Dic.Contains["key"]
-                //var ddl = DateTime.Parse(body["ddl"].ToString());
-
-                var query = context.Users.Where(user => user.Id == creatorId);
-                if (!query.Any())
+                var queryUser = context.Users.Where(user => user.Id == creatorId);
+                if (!queryUser.Any())
                     return Helper.Error(401, "创建者ID不存在");
+                var queryProgress = context.Progresses.Where(p => p.Id == progressId);
+                if (!queryProgress.Any())
+                    return Helper.Error(404, "进程不存在");
+
+                if (queryProgress.Single().Project.Users.All(u => u.Id != creatorId))
+                    return Helper.Error(403, "用户未参与该任务");
 
                 var newTask = new Task
                 {
                     Name = name,
                     Content = content,
                     OwnerId = creatorId,
-                    //Ddl = ddl,
                     State = false, //false代表未完成
                     EmergencyType = Emergency.Least
                 };
 
-                newTask.Users.Add(query.Single());
-                
-//                foreach (var memberId in memberIds)
-//                {
-//                    var memberIdI = int.Parse(memberId.ToString());
-//                    query = context.Users.Where(user => user.Id == memberIdI);
-//                    if (!query.Any())
-//                        return Helper.Error(417, "成员ID不存在");
-//
-//                    newTask.Users.Add(query.Single());
-//                }
-                
-                var queryProgress = context.Progresses.Where(progress => progress.Id == progressId);
-                if (!queryProgress.Any())
-                    return Helper.Error(401, "progress错误");
-
+                newTask.Users.Add(queryUser.Single());
                 newTask.ProgressId = progressId;
                 newTask.Progress = queryProgress.Single();
-                
 
                 if (!Helper.CheckPermission(newTask.Progress.ProjectId, newTask.OwnerId, true, OperationType.POST))
                 {

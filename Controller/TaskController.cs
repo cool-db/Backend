@@ -7,6 +7,35 @@ namespace Backend.Controller
     public class TaskController : ApiController
     {
         [HttpPost]
+        [Route("api/task")]
+        public object CreateTask(object json)
+        {
+            return TaskBiz.CreateTask(json);
+        }
+        
+        [HttpDelete]
+        [Route("api/task")]
+        public object DeleteTask(object json)
+        {
+            return TaskBiz.DeleteTask(json);
+        }
+        
+        [HttpGet]
+        [Route("api/task")]
+        public object GetInfo(int projectId, int taskId)
+        {
+            return TaskBiz.GetInfo(projectId, taskId);
+        }
+        
+        [HttpPut]
+        [Route("api/task")]
+        public object UpdateInfo(object json)
+        {
+            return TaskBiz.UpdateInfo(json);
+        }
+        
+        
+        [HttpPost]
         [Route("api/task/comment/")]
         public object AddComment(object json)
         {
@@ -27,19 +56,7 @@ namespace Backend.Controller
             return TaskBiz.GetCommentList(taskId);
         }
         
-        [HttpPost]
-        [Route("api/task")]
-        public object CreateTask(object json)
-        {
-            return TaskBiz.CreateTask(json);
-        }
-        
-        [HttpDelete]
-        [Route("api/task")]
-        public object DeleteTask(object json)
-        {
-            return TaskBiz.DeleteTask(json);
-        }
+
         
         [HttpGet]
         [Route("api/task/list")]
@@ -48,20 +65,7 @@ namespace Backend.Controller
             return TaskBiz.GetTaskList(projectId, userId);
         }
         
-        [HttpGet]
-        [Route("api/task/item")]
-        public object GetInfo(int projectId, int taskId)
-        {
-            return TaskBiz.GetInfo(projectId, taskId);
-        }
-        
-        [HttpPut]
-        [Route("api/task/item")]
-        public object UpdateInfo(object json)
-        {
-            return TaskBiz.UpdateInfo(json);
-        }
-        
+
         [HttpPut]
         [Route("api/task/state")]
         public object UpdateState(object json)
