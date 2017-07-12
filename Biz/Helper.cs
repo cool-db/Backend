@@ -107,5 +107,20 @@ namespace Backend.Biz
                 message
             };
         }
+
+        public static int ParseToken(string token)
+        {
+            using (var context = new BackendContext())
+            {
+                if (token == "")
+                    return 0;
+                var query = context.Users.Where(user => user.Token == token);
+                if (!query.Any())
+                    return 0;
+                return query.Single().Id;
+            }
+        }
+        
+        
     }
 }

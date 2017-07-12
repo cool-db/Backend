@@ -11,20 +11,18 @@ namespace Backend.Biz
         {
             var body = Helper.Decode(json);
             var token = body["token"];
-
+            var userId = Helper.ParseToken(token);
+            if (userId == 0)
+                return Helper.Error(401, "token错误");
             using (var context = new BackendContext())
             {
-                if (token == "")
-                    return Helper.Error(401, "token错误");
-                var query = context.Users.Where(user => user.Token == token);
-                if (!query.Any())
-                    return Helper.Error(401, "token错误");
-                var theUser = query.Single();
-
+                var theUser = (from user in context.Users
+                    where user.Id == userId
+                    select user).Single();
                 var data = new
                 {
                     id = theUser.Id,
-                    name = theUser.UserInfo.Name,
+                    name = theUser.UserInfo.Name
                 };
                 return Helper.BuildResult(data);
             }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Net.Cache;
-using Backend.Biz;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Backend.Model
 {
@@ -18,7 +18,7 @@ namespace Backend.Model
             Schedules = new List<Schedule>();
             Subtasks = new List<Subtask>();
             UserPermissons = new List<UserPermisson>();
-//            GenerateToken();
+            GenerateToken();
         }
 
         public int Id { get; set; }
@@ -46,14 +46,22 @@ namespace Backend.Model
 
         public void GenerateToken()
         {
-//            Token = DateTime.Now.ToLongTimeString();
+            var str = "salt" + Id + DateTime.Now;
+            var md5Hash = MD5.Create();
+            var data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(str));
+            var sBuilder = new StringBuilder();
+            foreach (var t in data)
+            {
+                sBuilder.Append(t.ToString("x2"));
+            }
+            Token = sBuilder.ToString();
         }
 
         public bool Authorize(int id, string token)
         {
             using (var context = new BackendContext())
             {
-                return context.Users.Any(user => user.Id==id&&user.Token==token);
+                return context.Users.Any(user => user.Id == id && user.Token == token);
             }
         }
     }
