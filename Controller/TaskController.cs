@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using Backend.Biz;
 
 namespace Backend.Controller
@@ -21,9 +22,9 @@ namespace Backend.Controller
         
         [HttpGet]
         [Route("api/task/comment/list")]
-        public object GetCommentList(int taskId)
+        public object GetCommentList(int taskId, String token)
         {
-            return TaskBiz.GetCommentList(taskId);
+            return TaskBiz.GetCommentList(taskId, token);
         }
         
         [HttpPost]

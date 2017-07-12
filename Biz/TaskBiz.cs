@@ -17,9 +17,9 @@ namespace Backend.Biz
             {
                 var name = body["name"].ToString();
                 var content = body["content"].ToString();
-                var creatorId = int.Parse(body["creatorId"].ToString());
-                var memberIds = JArray.Parse(body["memberId"].ToString());
-                var progressId = int.Parse(body["progressId"].ToString());
+                var creatorId = int.Parse(body["creator_id"].ToString());
+                var memberIds = JArray.Parse(body["member_id"].ToString());
+                var progressId = int.Parse(body["progress_id"].ToString());
 //                var files = JArray.Parse(body["file"].ToString());
                 if (body["file"] != null)
                 {
@@ -31,14 +31,14 @@ namespace Backend.Biz
                 var query = context.Users.Where(user => user.Id == creatorId);
                 if (!query.Any())
                     return Helper.Error(401, "创建者ID不存在");
-
+                
                 var newTask = new Task
                 {
                     Name = name,
                     Content = content,
                     OwnerId = creatorId,
                     Ddl = ddl,
-                    State = false, //false代表未完成
+                    State = false,//false代表未完成
                 };
 
                 newTask.Users.Add(query.Single());
@@ -65,10 +65,11 @@ namespace Backend.Biz
                 }
 
                 context.Tasks.Add(newTask);
-                context.SaveChanges();
+                context.SaveChanges(); 
+                
+                
 
-
-                var data = new
+                return new
                 {
                     taskId = newTask.Id,
                     projectId = newTask.Progress.ProjectId,
@@ -81,18 +82,17 @@ namespace Backend.Biz
                     comments = newTask.Comments,
 //                    files,//to do
                     ddl = newTask.Ddl,
+                    code = 200
                 };
-
-                return Helper.BuildResult(data);
             }
         }
-
+        
         public static object DeleteTask(object json)
         {
             var body = Helper.Decode(json);
-            var projectId = int.Parse(body["projectId"]);
-            var taskId = int.Parse(body["taskId"]);
-            var userId = int.Parse(body["userId"]);
+            var projectId = int.Parse(body["project_id"]);
+            var taskId = int.Parse(body["task_id"]);
+            var userId = int.Parse(body["user_id"]);
 
             using (var context = new BackendContext())
             {
@@ -103,7 +103,7 @@ namespace Backend.Biz
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
                 if (!queryProject.Any())
                     return Helper.Error(404, "项目不存在");
-
+                
                 var queryTask = context.Tasks.Where(task => task.Id == taskId);
                 if (!queryTask.Any())
                     return Helper.Error(404, "任务不存在");
@@ -118,14 +118,17 @@ namespace Backend.Biz
                 {
                     return Helper.Error(401, "无权限");
                 }
-
+                
                 context.Tasks.Remove(theTask);
                 context.SaveChanges();
 
-                return Helper.BuildResult("");
+                return new
+                {
+                    code = 200
+                };
             }
         }
-
+        
         public static object GetTaskList(int progectId, int userId)
         {
             using (var context = new BackendContext())
@@ -158,16 +161,16 @@ namespace Backend.Biz
                 {
                     return Helper.Error(401, "无权限");
                 }
+                
 
-
-                var data = new
+                return new
                 {
                     tasks,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
-
+        
         public static object GetInfo(int projectId, int taskId)
         {
             using (var context = new BackendContext())
@@ -175,13 +178,13 @@ namespace Backend.Biz
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
                 if (!queryProject.Any())
                     return Helper.Error(404, "项目不存在");
-
+                
                 var queryTask = context.Tasks.Where(task => task.Id == taskId);
                 if (!queryTask.Any())
                     return Helper.Error(404, "任务不存在");
 
                 var theTask = queryTask.Single();
-
+                
                 var memberIds = new List<object>();
                 foreach (var user in theTask.Users)
                 {
@@ -191,7 +194,7 @@ namespace Backend.Biz
                     });
                 }
 
-                var data = new
+                return new
                 {
                     taskId = theTask.Id,
                     name = theTask.Name,
@@ -204,18 +207,18 @@ namespace Backend.Biz
                     files = theTask.Files,
                     subtasks = theTask.Subtasks,
                     ddl = theTask.Ddl,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
-
+        
         public static object UpdateInfo(object json)
         {
 //            var body = JObject.Parse(json.ToString());
             var body = Helper.Decode(json);
-            var taskId = int.Parse(body["taskId"]);
-            var executorId = int.Parse(body["executorId"]);
-            var userId = int.Parse(body["userId"]);
+            var taskId = int.Parse(body["taskId"].ToString());
+            var executorId = int.Parse(body["executorId"].ToString());
+            var userId = int.Parse(body["userId"].ToString());
 //            var membersId = JArray.Parse(body["membersId"].ToString());
 
             using (var context = new BackendContext())
@@ -223,7 +226,7 @@ namespace Backend.Biz
                 var queryUser = context.Users.Where(user => user.Id == executorId);
                 if (!queryUser.Any())
                     return Helper.Error(401, "executorId错误");
-
+                
                 queryUser = context.Users.Where(user => user.Id == userId);
                 if (!queryUser.Any())
                     return Helper.Error(401, "userId错误");
@@ -240,17 +243,17 @@ namespace Backend.Biz
                 theTask.Content = (body.ContainsKey("taskContent"))
                     ? body["content"]
                     : theTask.Content;
-
-
+                
+                
                 bool flag = userId == theTask.OwnerId;
 
                 if (!Helper.CheckPermission(theTask.Progress.ProjectId, userId, flag, OperationType.PUT))
                 {
                     return Helper.Error(401, "无权限");
                 }
-
+                
                 context.SaveChanges();
-
+                
                 var memberIds = new List<object>();
                 foreach (var user in theTask.Users)
                 {
@@ -260,23 +263,23 @@ namespace Backend.Biz
                     });
                 }
 
-                var data = new
+                return new
                 {
                     taskId = theTask.Id,
                     executorId = theTask.OwnerId,
                     taskName = theTask.Name,
                     taskContent = theTask.Content,
                     memberIds,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
 
         public static object UpdateState(object json)
         {
             var body = Helper.Decode(json);
-            var taskId = int.Parse(body["taskId"]);
-            var userId = int.Parse(body["userId"]);
+            var taskId = int.Parse(body["taskId"].ToString());
+            var userId = int.Parse(body["userId"].ToString());
 
             using (var context = new BackendContext())
             {
@@ -301,28 +304,28 @@ namespace Backend.Biz
                             break;
                     }
                 }
-
+                
                 bool flag = userId == theTask.OwnerId;
 
                 if (!Helper.CheckPermission(theTask.Progress.ProjectId, userId, flag, OperationType.PUT))
                 {
                     return Helper.Error(401, "无权限");
                 }
-
+                
                 context.SaveChanges();
 
-                var data = new
+                return new
                 {
 //                    taskId = theTask.Id,
 //                    executorId = theTask.OwnerId,
 //                    taskName = theTask.Name,
 //                    taskContent = theTask.Content,
                     taskState = theTask.State,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
-
+        
         public static object CreateSubTask(object json)
         {
             var body = Helper.DecodeToObject(json);
@@ -332,18 +335,18 @@ namespace Backend.Biz
                 var content = body["subtaskContent"].ToString();
                 var taskId = int.Parse(body["taskId"].ToString());
                 var userId = int.Parse(body["userId"].ToString());
-
+                
                 var query = context.Users.Where(user => user.Id == userId);
                 if (!query.Any())
                     return Helper.Error(401, "userId不存在");
-
+                
                 var queryTask = context.Tasks.Where(task => task.Id == taskId);
                 if (!queryTask.Any())
                     return Helper.Error(404, "任务不存在");
 
                 var theTask = queryTask.Single();
-
-
+                
+                
                 var flag = userId == theTask.OwnerId;
 
 //                if (!Helper.CheckPermission(theTask.Progress.ProjectId, userId, flag, OperationType.POST))
@@ -356,26 +359,27 @@ namespace Backend.Biz
                     State = false,
                     UserId = userId,
                     TaskId = theTask.Id
+                    
                 };
                 newSubTask.User = query.Single();
-
+                
                 context.Subtasks.Add(newSubTask);
 
                 theTask.Subtasks.Add(newSubTask);
-                context.SaveChanges();
-
-                var data = new
+                context.SaveChanges(); 
+                
+                return new
                 {
                     subtaskId = newSubTask.Id,
                     subtaskContent = newSubTask.Content,
                     taskId = newSubTask.TaskId,
                     state = newSubTask.State,
                     executorId = newSubTask.UserId,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
-
+        
         public static object DeleteSubTask(object json)
         {
             var body = Helper.Decode(json);
@@ -401,69 +405,72 @@ namespace Backend.Biz
                 {
                     return Helper.Error(401, "无权限");
                 }
-
+                
                 context.Subtasks.Remove(theSubtask);
                 context.SaveChanges();
 
-                return Helper.BuildResult("");
+                return new
+                {
+                    code = 200
+                };
             }
         }
-
+        
         public static object UpdateSubtaskInfo(object json)
         {
             var body = Helper.Decode(json);
-            var subtaskId = int.Parse(body["subtaskId"]);
-            var subtaskExecutorId = int.Parse(body["subtaskExecutorId"]);
+            var subtaskId = int.Parse(body["subtaskId"].ToString());
+            var subtaskExecutorId = int.Parse(body["subtaskExecutorId"].ToString());
 
             using (var context = new BackendContext())
             {
                 var querySubtask = context.Subtasks.Where(subtaskI => subtaskI.Id == subtaskId);
                 if (!querySubtask.Any())
                     return Helper.Error(404, "子任务不存在");
-
+                
                 var theSubtask = querySubtask.Single();
                 if (theSubtask.UserId != subtaskExecutorId)
                     return Helper.Error(401, "该用户未拥有该项目");
 
                 theSubtask.Content = (body.ContainsKey("subtaskContent")) ? body["subtaskContent"] : theSubtask.Content;
-
+                
                 bool flag = subtaskExecutorId == theSubtask.UserId;
 
-                if (!Helper.CheckPermission(theSubtask.Task.Progress.ProjectId, subtaskExecutorId, flag,
-                    OperationType.DELETE))
+                if (!Helper.CheckPermission(theSubtask.Task.Progress.ProjectId, subtaskExecutorId, flag, OperationType.DELETE))
                 {
                     return Helper.Error(401, "无权限");
                 }
-
+                
                 context.SaveChanges();
 
-                var data = new
+                return new
                 {
                     subtaskId = theSubtask.Id,
                     state = theSubtask.State,
                     taskId = theSubtask.Task.Id,
                     subtaskContent = theSubtask.Content,
                     executorId = subtaskExecutorId,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
-
+        
         public static object UpdateSubtaskState(object json)
         {
             var body = Helper.Decode(json);
-            var subtaskId = int.Parse(body["subtaskId"]);
-            var userId = int.Parse(body["userId"]);
-
+            var subtaskId = int.Parse(body["subtaskId"].ToString());
+            var userId = int.Parse(body["userId"].ToString());
+            
             using (var context = new BackendContext())
             {
+                
                 var querySubtask = context.Subtasks.Where(subtask => subtask.Id == subtaskId);
                 if (!querySubtask.Any())
                     return Helper.Error(404, "子任务不存在");
 
                 var theSubtask = querySubtask.Single();
 //                theSubtask.State = theSubtask.State != true;
-
+                
                 if ((body.ContainsKey("state")))
                 {
                     if (body["state"] == "true")
@@ -473,25 +480,25 @@ namespace Backend.Biz
                         theSubtask.State = false;
                     }
                 }
-
+                
 //                bool flag = userId == theTask.OwnerId;
 //
 //                if (!Helper.CheckPermission(theSubtask.Task.Progress.ProjectId, userId, flag, OperationType.PUT))
 //                {
 //                    return Helper.Error(401, "无权限");
 //                }
-
+                
                 context.SaveChanges();
 
-                var data = new
+                return new
                 {
                     subtaskState = theSubtask.State,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
-
-
+        
+        
         public static object GetSubtaskList(int subtaskId)
         {
             using (var context = new BackendContext())
@@ -501,31 +508,33 @@ namespace Backend.Biz
                     return Helper.Error(404, "子任务不存在");
 
                 var theSubtask = querySubtask.Single();
-
-                var data = new
+                
+                return new
                 {
                     subtaskId = theSubtask.Id,
                     subtaskContent = theSubtask.Content,
                     state = theSubtask.State,
                     executorId = theSubtask.UserId,
+                    
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
-
+        
         public static object AddMember(object json)
         {
-            var body = JObject.Parse(json.ToString());
-            var taskId = int.Parse(body["taskId"].ToString());
-            var participatorIds = JArray.Parse(body["participatorIds"].ToString());
+
 
             using (var context = new BackendContext())
-            {
+            {            
+                var body = JObject.Parse(json.ToString());
+                var taskId = int.Parse(body["taskId"].ToString());
+                var participatorIds = JArray.Parse(body["participatorIds"].ToString());
                 var queryTask = context.Tasks.Where(task => task.Id == taskId);
                 if (!queryTask.Any())
                     return Helper.Error(404, "任务不存在");
                 var theTask = queryTask.Single();
-
+                
                 foreach (var memberId in participatorIds)
                 {
                     var memberIdI = int.Parse(memberId.ToString());
@@ -534,14 +543,14 @@ namespace Backend.Biz
                         return Helper.Error(404, "添加的用户不存在");
 
                     var theMember = query.Single();
-
+                    
                     if (theTask.Users.Contains(theMember))
                         return Helper.Error(417, "添加的用户已存在");
 
                     theTask.Users.Add(theMember);
                 }
 
-
+                
                 context.SaveChanges();
 
                 var members = new List<object>();
@@ -550,18 +559,18 @@ namespace Backend.Biz
                     members.Add(new
                     {
                         id = member.Id,
-                        name = member.UserInfo.Name
+//                        name = member.UserInfo.Name
                     });
                 }
 
-                var data = new
+                return new
                 {
                     members,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
-
+        
         public static object DeleteMember(object json)
         {
             var body = JObject.Parse(json.ToString());
@@ -583,7 +592,7 @@ namespace Backend.Biz
                         return Helper.Error(404, "删除的用户不存在");
 
                     var theMember = query.Single();
-
+                    
                     if (!theTask.Users.Contains(theMember))
                         return Helper.Error(417, "删除的用户不在任务参与者中");
 
@@ -595,9 +604,11 @@ namespace Backend.Biz
                         {
                             theTask.Subtasks.Remove(subtask);
                         }
-                    }
-                }
 
+                    }
+                    
+                }
+                
                 context.SaveChanges();
 
                 var members = new List<object>();
@@ -610,14 +621,14 @@ namespace Backend.Biz
                     });
                 }
 
-                var data = new
+                return new
                 {
                     members,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
-
+        
         public static object GetMemberList(int taskId)
         {
             using (var context = new BackendContext())
@@ -637,15 +648,15 @@ namespace Backend.Biz
                     });
                 }
 
-                var data = new
+                return new
                 {
                     members,
+                    code = 200
                 };
-                return Helper.BuildResult(data);
             }
         }
 
-
+        
         public static object AddComment(object json)
         {
             var body = Helper.Decode(json);
@@ -655,20 +666,20 @@ namespace Backend.Biz
                 var taskId = int.Parse(body["taskId"]);
                 var content = body["content"];
                 var time = DateTime.Parse(body["time"]);
-                var userId = int.Parse(body["userId"]);
+                var token = body["token"];
 
-                var taskQuery = context.Users.Where(user => user.Id == userId);
+                var taskQuery = context.Users.Where(user => user.Token == token);
                 if (!taskQuery.Any())
                     return Helper.Error(404, "任务不存在");
 
-                var userQuery = context.Users.Where(user => user.Id == userId);
+                var userQuery = context.Users.Where(user => user.Token == token);
                 if (!userQuery.Any())
-                    return Helper.Error(404, "用户不存在");
+                    return Helper.Error(401, "token错误");
 
                 var newComment = new Comment
                 {
                     TaskId = taskId,
-                    UserId = userId,
+                    UserId = userQuery.Single().Id,
                     Content = content,
                     Time = time
                 };
@@ -693,6 +704,7 @@ namespace Backend.Biz
                 };
                 return Helper.BuildResult(data);
             }
+
         }
 
 
@@ -701,10 +713,14 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var commentId = int.Parse(body["commentId"]);
             var taskId = int.Parse(body["taskId"]);
-            var userId = int.Parse(body["userId"]);
+            var token = body["token"];
 
             using (var context = new BackendContext())
             {
+                var userQuery = context.Users.Where(user => user.Token == token);
+                if (!userQuery.Any())
+                    return Helper.Error(401, "token错误");
+                
                 var queryComment = context.Comments.Where(comment => comment.Id == commentId);
                 if (!queryComment.Any())
                     return Helper.Error(404, "评论不存在");
@@ -714,27 +730,40 @@ namespace Backend.Biz
                     return Helper.Error(404, "任务不存在");
 
                 var theComment = queryComment.Single();
+                var userId = userQuery.Single().Id;
                 if (theComment.UserId != userId)
                     return Helper.Error(401, "该用户未发表该评论");
 
+                var pid = queryTask.Single().ProgressId;
+                var queryProjects = context.Progresses.Where(progress => progress.Id == pid);
+                var ownerId = queryProjects.Single().OwnerId;
+                if (!Helper.CheckPermission(queryProjects.Single().ProjectId, userId, ownerId == userId, OperationType.DELETE))
+                {
+                    return Helper.Error(403, "该用户未拥有权限");
+                }
+                
                 context.Comments.Remove(theComment);
                 context.SaveChanges();
 
-                var data = new { };
+                var data = new{};
                 return Helper.BuildResult(data);
             }
         }
 
-        public static object GetCommentList(int taskId)
+        public static object GetCommentList(int taskId, String token)
         {
             using (var context = new BackendContext())
             {
+                var userQuery = context.Users.Where(user => user.Token == token);
+                if (!userQuery.Any())
+                    return Helper.Error(401, "token错误");
+                
                 var queryTask = context.Tasks.Where(task => task.Id == taskId);
                 if (!queryTask.Any())
                     return Helper.Error(404, "任务不存在");
 
                 var theTask = queryTask.Single();
-
+                
                 var comments = new List<object>();
                 foreach (var comment in theTask.Comments)
                 {
@@ -752,5 +781,6 @@ namespace Backend.Biz
                 return Helper.BuildResult(data);
             }
         }
+        
     }
 }
