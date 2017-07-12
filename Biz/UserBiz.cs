@@ -95,9 +95,20 @@ namespace Backend.Biz
                     Email = email,
                     Password = password,
                     UserInfo = new UserInfo()
+                    {
+                        Name = (body.ContainsKey("name")) ? body["name"] : null,
+                        Address = (body.ContainsKey("address")) ? body["address"] : null,
+                        Gender = (body.ContainsKey("gender")) ? Helper.ParseBool(body["gender"]) : null,
+                        Phonenumber = (body.ContainsKey("phonenumber")) ? body["phonenumber"] : null,
+                        Job = (body.ContainsKey("job")) ? body["job"] : null,
+                        Website = (body.ContainsKey("website")) ? body["website"] : null,
+                        Birthday = (body.ContainsKey("birthday")) ? Helper.ParseDateTime(body["birthday"]) : null
+                    }
                 };
+                
                 context.Users.Add(newUser);
                 context.SaveChanges();
+                
                 var data = new
                 {
                     id = newUser.Id,
