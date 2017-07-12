@@ -11,22 +11,25 @@ namespace Backend.Biz
     {
         public static object CreateTask(object json)
         {
+            //老毕 我把你代码改了
             var body = Helper.DecodeToObject(json);
 
             using (var context = new BackendContext())
             {
                 var name = body["name"].ToString();
-                var content = body["content"].ToString();
-                var creatorId = int.Parse(body["creatorId"].ToString());
-                var memberIds = JArray.Parse(body["memberId"].ToString());
                 var progressId = int.Parse(body["progressId"].ToString());
-//                var files = JArray.Parse(body["file"].ToString());
-                if (body["file"] != null)
-                {
-                    Console.WriteLine("the problem is: {0} ");
-                }
-//                var files = Dic.Contains["key"]
-                var ddl = DateTime.Parse(body["ddl"].ToString());
+                var creatorId = int.Parse(body["creatorId"].ToString());
+                var content = body["content"].ToString();
+
+                // var content = body["content"].ToString();
+                // var memberIds = JArray.Parse(body["memberId"].ToString());
+                // var files = JArray.Parse(body["file"].ToString());
+                // if (body["file"] != null)
+                // {
+                //     Console.WriteLine("the problem is: {0} ");
+                // }
+                // var files = Dic.Contains["key"]
+                //var ddl = DateTime.Parse(body["ddl"].ToString());
 
                 var query = context.Users.Where(user => user.Id == creatorId);
                 if (!query.Any())
@@ -37,27 +40,30 @@ namespace Backend.Biz
                     Name = name,
                     Content = content,
                     OwnerId = creatorId,
-                    Ddl = ddl,
+                    //Ddl = ddl,
                     State = false, //false代表未完成
+                    EmergencyType = Emergency.Least
                 };
 
                 newTask.Users.Add(query.Single());
-                foreach (var memberId in memberIds)
-                {
-                    var memberIdI = int.Parse(memberId.ToString());
-                    query = context.Users.Where(user => user.Id == memberIdI);
-                    if (!query.Any())
-                        return Helper.Error(417, "成员ID不存在");
-
-                    newTask.Users.Add(query.Single());
-                }
+                
+//                foreach (var memberId in memberIds)
+//                {
+//                    var memberIdI = int.Parse(memberId.ToString());
+//                    query = context.Users.Where(user => user.Id == memberIdI);
+//                    if (!query.Any())
+//                        return Helper.Error(417, "成员ID不存在");
+//
+//                    newTask.Users.Add(query.Single());
+//                }
+                
                 var queryProgress = context.Progresses.Where(progress => progress.Id == progressId);
                 if (!queryProgress.Any())
                     return Helper.Error(401, "progress错误");
 
                 newTask.ProgressId = progressId;
                 newTask.Progress = queryProgress.Single();
-                //to do
+                
 
                 if (!Helper.CheckPermission(newTask.Progress.ProjectId, newTask.OwnerId, true, OperationType.POST))
                 {
@@ -71,16 +77,17 @@ namespace Backend.Biz
                 var data = new
                 {
                     taskId = newTask.Id,
-                    projectId = newTask.Progress.ProjectId,
                     name = newTask.Name,
-                    content = newTask.Content,
                     state = newTask.State,
                     executorId = newTask.OwnerId,
-                    memberIds,
                     progressId = newTask.ProgressId,
-                    comments = newTask.Comments,
-//                    files,//to do
-                    ddl = newTask.Ddl,
+                    emergencyType = newTask.EmergencyType
+                    //projectId = newTask.Progress.ProjectId,
+                    //comments = newTask.Comments,
+                    //files,
+                    //ddl = newTask.Ddl,
+                    //memberIds,
+                    //content = newTask.Content,
                 };
 
                 return Helper.BuildResult(data);
@@ -757,18 +764,18 @@ namespace Backend.Biz
         {
             var body = Helper.Decode(json);
             var taskId = int.Parse(body["taskId"]);
-            
+
             var progressIdTo = int.Parse(body["progressIdTo"]);
 
             using (var context = new BackendContext())
             {
                 var queryTask = context.Tasks.Where(task => task.Id == taskId);
-                
+
                 var progressId = queryTask.Single().ProgressId;
-                
+
                 var queryProgress = context.Progresses.Where(p => p.Id == progressId);
                 var queryProgressTo = context.Progresses.Where(p => p.Id == progressIdTo);
-                
+
                 if (!queryTask.Any())
                     return Helper.Error(404, "任务不存在");
 
@@ -794,9 +801,7 @@ namespace Backend.Biz
                 };
 
                 return Helper.BuildResult(data);
-
             }
-
         }
     }
 }
