@@ -1,4 +1,4 @@
-﻿using System.Web.Http;
+﻿﻿using System.Web.Http;
 using Backend.Biz;
 using Backend.Model;
 
@@ -45,9 +45,9 @@ namespace Backend.Controller
 
         [HttpGet]
         [Route("api/project/list")]
-        public object GetList(int ownerId)
+        public object GetList(int userId)
         {
-            return ProjectBiz.GetList(ownerId);
+            return ProjectBiz.GetList(userId);
         }
 
         #endregion
@@ -60,7 +60,7 @@ namespace Backend.Controller
         {
             return ProjectBiz.AddMember(json);
         }
-
+        
         [HttpDelete]
         [Route("api/project/member")]
         public object DeleteMember(object json)
@@ -72,8 +72,7 @@ namespace Backend.Controller
         [Route("api/project/member/list")]
         public object GetMemberList(int projectId)
         {
-            //return ProjectBiz.GetMemberList(projectId);
-            return 0;
+            return ProjectBiz.GetMemberList(projectId);
         }
 
         #endregion

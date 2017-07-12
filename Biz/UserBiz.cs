@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Backend.Model;
@@ -51,8 +51,8 @@ namespace Backend.Biz
                 var data = new
                 {
                     id = theUser.Id,
-                    //token = theUser.Token,
-                    //name = theUser.UserInfo.Name,
+                    token = theUser.Token,
+                    name = theUser.UserInfo.Name,
                 };
                 return Helper.BuildResult(data);
             }
@@ -62,20 +62,19 @@ namespace Backend.Biz
         {
             var body = Helper.Decode(json);
             var id = int.Parse(body["id"]);
-            //var token = body["token"];
 
             using (var context = new BackendContext())
             {
-                var query = context.Users.Where(user => user.Id == id /*&& user.Token == token*/);
+                var query = context.Users.Where(user => user.Id == id);
 
                 if (!query.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(404, "不存在该user");
 
                 var theUser = query.Single();
                 theUser.GenerateToken();
                 context.SaveChanges();
 
-                return Helper.BuildResult("");
+                return Helper.BuildResult(null);
             }
         }
 
@@ -89,14 +88,14 @@ namespace Backend.Biz
             {
                 if (context.Users.Any(user => user.Email == email))
                     return Helper.Error(401, "该email已注册");
-                
+
                 var newUser = new User
                 {
                     Email = email,
                     Password = password,
                     UserInfo = new UserInfo()
                     {
-                        Name = (body.ContainsKey("name")) ? body["name"] : null,
+                        Name = (body.ContainsKey("name")) ? body["name"] : email,
                         Address = (body.ContainsKey("address")) ? body["address"] : null,
                         Gender = (body.ContainsKey("gender")) ? Helper.ParseBool(body["gender"]) : null,
                         Phonenumber = (body.ContainsKey("phonenumber")) ? body["phonenumber"] : null,
@@ -105,14 +104,16 @@ namespace Backend.Biz
                         Birthday = (body.ContainsKey("birthday")) ? Helper.ParseDateTime(body["birthday"]) : null
                     }
                 };
-                
+
                 context.Users.Add(newUser);
                 context.SaveChanges();
-                
+
                 var data = new
                 {
                     id = newUser.Id,
-                   // token = newUser.Token,
+                    email = newUser.Email,
+                    name = newUser.UserInfo.Name,
+                    token = newUser.Token,
                 };
                 return Helper.BuildResult(data);
             }
@@ -124,13 +125,14 @@ namespace Backend.Biz
             {
                 var query = context.Users.Where(user => user.Id == id);
                 if (!query.Any())
-                    return Helper.Error(404, "id不存在");
+                    return Helper.Error(404, "用户不存在");
 
                 var theUser = query.Single();
 
                 var data = new
                 {
                     id = theUser.Id,
+                    email=theUser.Email,
                     name = theUser.UserInfo.Name,
                     address = theUser.UserInfo.Address,
                     gender = theUser.UserInfo.Gender,
@@ -163,7 +165,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    //token = theUser.Token,
+                    token = theUser.Token,
                 };
                 return Helper.BuildResult(data);
             }
@@ -176,9 +178,9 @@ namespace Backend.Biz
 
             using (var context = new BackendContext())
             {
-                var query = context.Users.Where(user => user.Id == id );
+                var query = context.Users.Where(user => user.Id == id);
                 if (!query.Any())
-                    return Helper.Error(401, "token错误");
+                    return Helper.Error(404, "该用户不存在");
 
                 var theUser = query.Single();
                 var info = theUser.UserInfo;
