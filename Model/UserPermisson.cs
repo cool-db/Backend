@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Threading;
 
 namespace Backend.Model
@@ -12,9 +13,10 @@ namespace Backend.Model
     
     public class UserPermisson
     {
-        public int Id { get; set; }
-
+        [Key,Column(Order = 0)]
         public int UserId { get; set; }
+        
+        [Key,Column(Order = 1)]
         public int ProjectId { get; set; }
         
         [Required]
