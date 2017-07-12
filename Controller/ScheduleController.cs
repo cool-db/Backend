@@ -12,49 +12,57 @@ namespace Backend.Controller
         {
             return ScheduleBiz.CreateSchedule(json);
         }
-        
+
         [HttpDelete]
         [Route("api/schedule/")]
         public object DeleteSchedule(object json)
         {
             return ScheduleBiz.DeleteSchedule(json);
         }
-        
+
         [HttpPut]
         [Route("api/schedule/")]
         public object UpdateSchedule(object json)
         {
             return ScheduleBiz.UpdateSchedule(json);
         }
-        
+
         [HttpGet]
         [Route("api/schedule/")]
         public object GetSchedule(int scheduleId)
         {
             return ScheduleBiz.GetSchedule(scheduleId);
         }
-        
+
         [HttpGet]
         [Route("api/schedule/list/")]
-        public object GetScheduleList(int userId)
+        public object GetScheduleList(int projectId)
         {
-            return ScheduleBiz.GetScheduleList(userId);
+            return ScheduleBiz.GetScheduleList(projectId);
         }
-        
+
+        [HttpGet]
+        [Route("api/schedule/list/")]
+        public object GetUserScheduleList(int userId, int projectId)
+        {
+            return ScheduleBiz.GetUserScheduleList(userId, projectId);
+        }
+
+
         [HttpPost]
         [Route("api/schedule/participator")]
         public object AddParticipator(object json)
         {
             return ScheduleBiz.AddParticipator(json);
         }
-        
+
         [HttpDelete]
         [Route("api/schedule/participator")]
         public object DeleteParticipator(object json)
         {
             return ScheduleBiz.DeleteParticipator(json);
         }
-        
+
         [HttpGet]
         [Route("api/schedule/participator/list")]
         public object GetParticipatorList(int scheduleId)
