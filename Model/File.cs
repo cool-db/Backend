@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Model
 {
     public class File
     {
+        public File()
+        {
+            Tasks = new List<Task>();
+        }
+        
         public int Id { get; set; }
 
         [Required]
@@ -17,9 +23,12 @@ namespace Backend.Model
 
         
         public int UserId { get; set; }
-        public int TaskId { get; set; }
+        public int ProjectId { get; set; }
         
         public virtual User User { get; set; } //上传文件者
-        public virtual Task Task { get; set; } //依附的任务
+        public virtual Project Project { get; set; }
+        
+        public virtual ICollection<Task> Tasks { get; set; } //依附的任务
+        
     }
 }

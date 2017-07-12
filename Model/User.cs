@@ -25,17 +25,16 @@ namespace Backend.Model
 
         [Required]
         [MaxLength(20)]
-       // [Index] todo
+        [Index]
         public string Email { get; set; }
 
         [Required]
         [MaxLength(20)]
         public string Password { get; set; }
 
-        [MaxLength(20)]
+        [MaxLength(100)]
         [Index(IsUnique = true)]
         public string Token { get; set; }
-
 
         public virtual UserInfo UserInfo { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
@@ -54,7 +53,7 @@ namespace Backend.Model
         {
             using (var context = new BackendContext())
             {
-                return context.Users.Any(user => user.Id==id&&user.Token==token);
+                return context.Users.Any(user => user.Id == id && user.Token == token);
             }
         }
     }
