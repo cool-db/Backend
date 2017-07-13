@@ -32,7 +32,6 @@ namespace Backend.Biz
 
                 var newSchedule = new Schedule
                 {
-                    Users = new List<User> {theUser},
                     Content = scheduleContent,
                     EndTime = body.ContainsKey("endTime")
                         ? DateTime.Parse(body["endTime"])
