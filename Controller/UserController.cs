@@ -55,6 +55,12 @@ namespace Backend.Controller
         {
             return UserBiz.ChangePassword(json);
         }
-        
+
+        [HttpGet]
+        [Route("api/user/recent")]
+        public object GetRecent(int userId)
+        {
+            return UserBiz.GetRecent(userId);
+        }
     }
 }

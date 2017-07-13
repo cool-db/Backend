@@ -207,5 +207,52 @@ namespace Backend.Biz
                 return Helper.BuildResult(data);
             }
         }
+
+        public static object GetRecent(int userId)
+        {
+            using (var context = new BackendContext())
+            {
+                var recentTask =  (from task in context.Tasks
+                    where task.OwnerId == userId
+                    select new
+                    {
+                        id = task.Id,
+                        name = task.Name,
+                        ddl = task.Ddl
+                    }).OrderByDescending(t => t.ddl).ToArray();
+                
+                var recentSchedule =  (from s in context.Schedules
+                    where s.OwerId == userId
+                    select new
+                    {
+                        id = s.Id,
+                        name = s.Name,
+                        endTime = s.EndTime
+                    }).OrderByDescending(t => t.endTime).ToArray();
+                
+                var recenFile =  (from file in context.File
+                    where file.UserId == userId
+                    select new
+                    {
+                        id = file.Id,
+                        name = file.Name,
+                        uploadTime = file.UploadTime
+                    }).OrderByDescending(t => t.uploadTime).ToArray();
+
+
+                var data = new
+                {
+                    recentTask,
+                    recenFile,
+                    recentSchedule
+                };
+                    
+                
+                return Helper.BuildResult(data);
+
+            }
+            
+        }
+        
     }
 }
