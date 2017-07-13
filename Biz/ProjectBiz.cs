@@ -234,10 +234,26 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var projectId = int.Parse(body["projectId"]);
             var userId = int.Parse(body["userId"]);
-            var memberId = int.Parse(body["memberId"]);
-
+            
             using (var context = new BackendContext())
             {
+                
+                int memberId;
+                if (body.ContainsKey("email"))
+                {
+                    var email = body["email"];
+                    memberId = context.Users.Where(u => u.Email == email).Single().Id;
+                }
+                else if(body.ContainsKey("name"))
+                {
+                    var name = body["name"];
+                    memberId = context.Users.Where(u => u.UserInfo.Name == name).Single().Id;
+                }
+                else
+                {
+                    return Helper.Error(404, "传值不足");
+                }
+                
                 var queryUser = context.Users.Where(user => user.Id == userId);
                 if (!queryUser.Any())
                     return Helper.Error(404, "用户不存在");
