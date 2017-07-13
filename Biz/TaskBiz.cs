@@ -79,10 +79,19 @@ namespace Backend.Biz
                     progressId = newTask.ProgressId,
                     emergencyType = newTask.EmergencyType,
                     ddl = newTask.Ddl,
-                    member = from user in newTask.Users
-                    select new
-                    {
-                    }
+                    member = (from user in newTask.Users
+                        select new
+                        {
+                            id = user.Id,
+                            email = user.Email,
+                            name = user.UserInfo.Name,
+                            address = user.UserInfo.Website,
+                            job = user.UserInfo.Job,
+                            gender = user.UserInfo.Gender,
+                            avatar = user.UserInfo.Avatar,
+                            phonenumber = user.UserInfo.Phonenumber,
+                            birthday = user.UserInfo.Birthday
+                        }).ToArray(),
                 };
 
                 return Helper.BuildResult(data);
@@ -1017,8 +1026,8 @@ namespace Backend.Biz
                         projectId = file.ProjectId,
                         userId = file.UserId,
                         uploadTime = file.UploadTime,
-                        avatar=file.User.UserInfo.Avatar,
-                        userName=file.User.UserInfo.Name,
+                        avatar = file.User.UserInfo.Avatar,
+                        userName = file.User.UserInfo.Name,
                     }).ToArray();
                 return Helper.BuildResult(data);
             }
