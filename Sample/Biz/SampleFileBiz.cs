@@ -31,7 +31,7 @@ namespace Backend.Sample.Biz
                     Name = file.FileName,
                     Type = file.ContentType,
                     Size = file.InputStream.Length,
-                    Content = bytes,
+                    Content = bytes
                 };
                 context.Files.Add(newFile);
                 context.SaveChanges();
