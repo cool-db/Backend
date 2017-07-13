@@ -60,7 +60,7 @@ namespace Backend.Biz
                     endTime = newSchedule.EndTime,
                     repeatDaily = newSchedule.RepeatDaily,
                     repeatWeekly = newSchedule.RepeatWeekly,
-                    participatorIds = ids
+//                    participatorIds = ids
                 };
 
                 return Helper.BuildResult(data);
