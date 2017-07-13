@@ -9,6 +9,23 @@ namespace Backend.Biz
 {
     public class TaskBiz
     {
+        public static void RecordTaskOperation(int userId, int taskId , string content)
+        {
+            using (var context = new BackendContext())
+            {
+                var user = context.Users.Where(u => u.Id == userId).Single();
+
+                context.TaskOperations.Add(new TaskOperation()
+                {
+                    Content = "用户 " + user.Email + " "+ content,
+                    TaskId = taskId,
+                    UserId = userId,
+                    Time = DateTime.Now
+                });
+                context.SaveChanges();
+            }
+        }
+        
         public static object CreateTask(object json)
         {
             var body = Helper.DecodeToObject(json);
@@ -52,6 +69,8 @@ namespace Backend.Biz
                 context.SaveChanges();
 
 
+                RecordTaskOperation(creatorId, newTask.Id, "创建了该任务");
+                
                 var data = new
                 {
                     taskId = newTask.Id,
@@ -155,6 +174,9 @@ namespace Backend.Biz
                 theTask.OwnerId = (body.ContainsKey("ownerId")) ? int.Parse(body["ownerId"]) : theTask.OwnerId;
 
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, taskId, "更新了该任务的信息");
+
 
                 var memberIds = (from user in theTask.Users
                     select new
@@ -215,6 +237,7 @@ namespace Backend.Biz
             }
         }
 
+        
         public static object GetTaskList(int projectId)
         {
             using (var context = new BackendContext())
@@ -286,6 +309,9 @@ namespace Backend.Biz
                     theTask.State = bool.Parse(body["state"]);
 
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, taskId, "更新了该任务的状态");
+
 
                 var data = new
                 {
@@ -345,6 +371,9 @@ namespace Backend.Biz
 
                 theTask.Subtasks.Add(newSubTask);
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, taskId, "创建了子任务:" + newSubTask.Content);
+
 
                 var data = new
                 {
@@ -386,6 +415,9 @@ namespace Backend.Biz
 
                 context.Subtasks.Remove(theSubtask);
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, theSubtask.TaskId, "删除了子任务:" + theSubtask.Content);
+
 
                 return Helper.BuildResult("");
             }
@@ -418,6 +450,9 @@ namespace Backend.Biz
                 }
 
                 context.SaveChanges();
+                
+                RecordTaskOperation(subtaskExecutorId, theSubtask.TaskId, "更新了了子任务:" + theSubtask.Content + "的信息");
+
 
                 var data = new
                 {
@@ -464,6 +499,9 @@ namespace Backend.Biz
 //                }
 
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, theSubtask.TaskId, "更新了了子任务:" + theSubtask.Content + "的状态");
+
 
                 var data = new
                 {
@@ -523,6 +561,9 @@ namespace Backend.Biz
                 theTask.Users.Add(theParticipator);
 
                 context.SaveChanges();
+                
+                RecordTaskOperation(participatorId, taskId, "给该任务增加了新成员：" + theParticipator.Email);
+
 
                 var participators = (from user in theTask.Users
                     select new
@@ -572,6 +613,9 @@ namespace Backend.Biz
                 }
 
                 context.SaveChanges();
+                
+                RecordTaskOperation(participatorId, taskId, "给该任务删除了成员：" + theParticipator.Email);
+
 
                 var participators = (from user in theTask.Users
                     select new
@@ -641,6 +685,9 @@ namespace Backend.Biz
 
                 context.Comments.Add(newComment);
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, taskId, "添加了评论：" + content);
+
 
                 var theTask = taskQuery.Single();
                 var comments = new List<object>();
@@ -685,6 +732,9 @@ namespace Backend.Biz
 
                 context.Comments.Remove(theComment);
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, taskId, "删除了了评论：" + theComment.Content);
+
 
                 var data = new { };
                 return Helper.BuildResult(data);
@@ -749,6 +799,9 @@ namespace Backend.Biz
                 theProgressTo.Tasks.Add(theTask);
 
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, taskId, "修改了任务到：" + theProgress.Name);
+
 
                 var data = new
                 {
@@ -803,6 +856,9 @@ namespace Backend.Biz
 
                 theFile.Tasks.Add(theTask);
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, taskId, "把文件" + theFile.Name +"关联到该任务");
+
 
 
                 var data = (from file in theTask.Files
@@ -856,6 +912,9 @@ namespace Backend.Biz
 
                 theFile.Tasks.Remove(theTask);
                 context.SaveChanges();
+                
+                RecordTaskOperation(userId, taskId, "把文件" + theFile.Name +"和该任务解除关联");
+
 
                 var data = (from file in theTask.Files
                     select new
