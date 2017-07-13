@@ -8,7 +8,7 @@ namespace Backend.Biz
 {
     public class ProjectBiz
     {
-        public static void RecordProjectOperation(int userId, int projectId , string content)
+        public static void RecordProjectOperation(int userId, int projectId, string content)
         {
             using (var context = new BackendContext())
             {
@@ -16,7 +16,7 @@ namespace Backend.Biz
 
                 context.ProjectOperations.Add(new ProjectOperation()
                 {
-                    Content = "用户 " + user.Email + " "+ content,
+                    Content = "用户 " + user.Email + " " + content,
                     ProjectId = projectId,
                     UserId = userId,
                     Time = DateTime.Now
@@ -25,7 +25,7 @@ namespace Backend.Biz
             }
         }
 
-        
+
         #region project
 
         public static object CreateProject(object json)
@@ -57,7 +57,7 @@ namespace Backend.Biz
                 });
                 context.Projects.Add(newProject);
                 context.SaveChanges();
-                
+
                 RecordProjectOperation(ownerId, newProject.Id, "创建新项目");
 
                 var data = new
@@ -123,8 +123,10 @@ namespace Backend.Biz
                     return Helper.Error(401, "该用户未拥有该项目");
 
                 theProject.OwnerId = ownerIdTo;
+                theProject.UserPermissons.Single(p => p.UserId == ownerId).Permission = Permission.Participant;
+                theProject.UserPermissons.Single(p => p.UserId == ownerIdTo).Permission = Permission.Creator;
                 context.SaveChanges();
-                
+
                 RecordProjectOperation(ownerId, theProject.Id, "移交项目给用户 " + queryUserTo.Single().Email);
 
 
@@ -185,9 +187,9 @@ namespace Backend.Biz
                     ? body["projectDiscription"]
                     : theProject.Description;
                 context.SaveChanges();
-                
+
                 RecordProjectOperation(ownerId, projectId, "更新了项目信息");
-                
+
                 var data = new
                 {
                     projectId = theProject.Id,
@@ -233,17 +235,16 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var projectId = int.Parse(body["projectId"]);
             var userId = int.Parse(body["userId"]);
-            
+
             using (var context = new BackendContext())
             {
-                
                 int memberId;
                 if (body.ContainsKey("email"))
                 {
                     var email = body["email"];
                     memberId = context.Users.Where(u => u.Email == email).Single().Id;
                 }
-                else if(body.ContainsKey("name"))
+                else if (body.ContainsKey("name"))
                 {
                     var name = body["name"];
                     memberId = context.Users.Where(u => u.UserInfo.Name == name).Single().Id;
@@ -252,7 +253,7 @@ namespace Backend.Biz
                 {
                     return Helper.Error(404, "传值不足");
                 }
-                
+
                 var queryUser = context.Users.Where(user => user.Id == userId);
                 if (!queryUser.Any())
                     return Helper.Error(404, "用户不存在");
@@ -286,9 +287,8 @@ namespace Backend.Biz
                         UserId = userId
                     });
                     context.SaveChanges();
-                    
-                    RecordProjectOperation(userId,projectId,"增加了新成员 " + theMember.Email);
 
+                    RecordProjectOperation(userId, projectId, "增加了新成员 " + theMember.Email);
                 }
                 else
                 {
@@ -300,7 +300,7 @@ namespace Backend.Biz
                     {
                         id = theProjectUser.Id,
                         name = theProjectUser.UserInfo.Name,
-                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId==projectId).Permission
+                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId == projectId).Permission
                     }).ToArray();
 
                 var data = new
@@ -352,15 +352,15 @@ namespace Backend.Biz
                     context.UserPermissons.Remove(queryPermission2.Single());
                 theProject.Users.Remove(theMember);
                 context.SaveChanges();
-                
-                RecordProjectOperation(userId,projectId,"删除了成员 " + theMember.Email);
+
+                RecordProjectOperation(userId, projectId, "删除了成员 " + theMember.Email);
 
                 var members = (from theProjectUser in theProject.Users
                     select new
                     {
                         id = theProjectUser.Id,
                         name = theProjectUser.UserInfo.Name,
-                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId==projectId).Permission
+                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId == projectId).Permission
                     }).ToArray();
 
                 var data = new
@@ -385,7 +385,7 @@ namespace Backend.Biz
                     {
                         id = theProjectUser.Id,
                         name = theProjectUser.UserInfo.Name,
-                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId==projectId).Permission,
+                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId == projectId).Permission,
                         email = theProjectUser.Email,
                         avatar = theProjectUser.UserInfo.Avatar
                     }).ToArray();
@@ -434,6 +434,8 @@ namespace Backend.Biz
                     return Helper.Error(404, "项目不存在");
 
                 var theProject = queryProject.Single();
+                if (theProject.OwnerId == memberId)
+                    return Helper.Error(400, "不能修改管理员的权限");
 
                 var queryMember = context.Users.Where(member => member.Id == memberId);
                 if (!queryMember.Any())
@@ -456,16 +458,15 @@ namespace Backend.Biz
                 if (queryPermission2.Any())
                     queryPermission2.Single().Permission = (Permission) permission;
 
-                RecordProjectOperation(userId,projectId,"给成员 " + theMember.Email + " 提升了权限");
+                RecordProjectOperation(userId, projectId, "给成员 " + theMember.Email + " 提升了权限");
 
-                
+
                 var members = (from theProjectUser in theProject.Users
                     select new
                     {
                         id = theProjectUser.Id,
                         name = theProjectUser.UserInfo.Name,
-                        permission=theProjectUser.UserPermissons.Single(p=>p.ProjectId==projectId).Permission
-                            
+                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId == projectId).Permission
                     }).ToArray();
 
                 var data = new
@@ -515,8 +516,8 @@ namespace Backend.Biz
                 };
                 context.Progresses.Add(newProgress);
                 context.SaveChanges();
-                
-                RecordProjectOperation(userId,projectId,"创建了新进程 " + progressName);
+
+                RecordProjectOperation(userId, projectId, "创建了新进程 " + progressName);
 
 
                 var progressList = Progress.GetProgerssList(projectId);
@@ -551,24 +552,26 @@ namespace Backend.Biz
 
                 if (!theProject.Users.Contains(theUser))
                     return Helper.Error(401, "该用户未参与该项目");
-                
-                
+
+                if (theProgress.Tasks.Count != 0)
+                    return Helper.Error(400, "进度非空");
+
                 var queryPermission = context.UserPermissons.Where(p =>
                     p.ProjectId == theProject.Id && p.UserId == userId);
                 if (queryPermission.Single().Permission == Permission.Participant)
                 {
                     return Helper.Error(401, "权限不足");
                 }
-                
-                foreach (var progress in context.Progresses)
+
+                foreach (var progress in theProject.Progresses)
                 {
                     if (progress.Order > theProgress.Order)
                         --progress.Order;
                 }
                 context.Progresses.Remove(theProgress);
                 context.SaveChanges();
-                
-                RecordProjectOperation(userId,theProject.Id,"创建了新进程 " + theProgress.Name);
+
+                RecordProjectOperation(userId, theProject.Id, "创建了新进程 " + theProgress.Name);
 
                 var progressList = Progress.GetProgerssList(theProject.Id);
 
@@ -603,22 +606,22 @@ namespace Backend.Biz
 
                 if (!theProject.Users.Contains(theUser))
                     return Helper.Error(401, "该用户未参与该项目");
-                
-                
+
+
                 var queryPermission = context.UserPermissons.Where(p =>
                     p.ProjectId == theProject.Id && p.UserId == userId);
                 if (queryPermission.Single().Permission == Permission.Participant)
                 {
                     return Helper.Error(401, "权限不足");
                 }
-                
+
                 if (string.IsNullOrWhiteSpace(progressName))
                     return Helper.Error(417, "名称为空");
 
                 theProgress.Name = progressName;
                 context.SaveChanges();
-                
-                RecordProjectOperation(userId,theProject.Id,"更新了进程 " + theProgress.Name + "的名字");
+
+                RecordProjectOperation(userId, theProject.Id, "更新了进程 " + theProgress.Name + "的名字");
 
                 var progressList = Progress.GetProgerssList(theProject.Id);
 
@@ -668,10 +671,10 @@ namespace Backend.Biz
                     }
 
                     context.SaveChanges();
-                    
-                    RecordProjectOperation(userId,projectId,"更新了进程的顺序");
 
-                    
+                    RecordProjectOperation(userId, projectId, "更新了进程的顺序");
+
+
                     var progressList = Progress.GetProgerssList(theProject.Id);
 
                     var data = new
