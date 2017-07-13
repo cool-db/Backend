@@ -12,9 +12,9 @@ namespace Backend.Controller
     {
         [HttpGet]
         [Route("api/file")]
-        public object GetFile(int FileId)
+        public object GetFile(int fileId)
         {
-            var file = FileBiz.GetFile(FileId);
+            var file = FileBiz.GetFile(fileId);
             var response = Request.CreateResponse();
             response.Content = new ByteArrayContent(file.Content);
             response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")

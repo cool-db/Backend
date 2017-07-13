@@ -62,10 +62,11 @@ namespace Backend.Biz
                     where file.ProjectId == projectId
                     select new
                     {
-                        file.Id,
-                        file.Name,
-                        file.UploadTime,
-                        file.UserId
+                        id = file.Id,
+                        name = file.Name,
+                        time = file.UploadTime,
+                        userId = file.UserId,
+                        downloadLink = "http://123.207.222.112:5001/api/file/?FileId="+file.Id
                     }).ToArray();
                 return Helper.BuildResult(data);
             }
