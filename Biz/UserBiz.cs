@@ -22,7 +22,8 @@ namespace Backend.Biz
                 var data = new
                 {
                     id = theUser.Id,
-                    name = theUser.UserInfo.Name
+                    name = theUser.UserInfo.Name,
+                    avatar = theUser.UserInfo.Avatar
                 };
                 return Helper.BuildResult(data);
             }
@@ -114,7 +115,8 @@ namespace Backend.Biz
                     id = newUser.Id,
                     email = newUser.Email,
                     name = newUser.UserInfo.Name,
-                    token = newUser.Token,
+                    avatar = newUser.UserInfo.Avatar,
+                    token = newUser.Token
                 };
                 return Helper.BuildResult(data);
             }
@@ -141,6 +143,7 @@ namespace Backend.Biz
                     job = theUser.UserInfo.Job,
                     website = theUser.UserInfo.Website,
                     birthday = theUser.UserInfo.Birthday,
+                    avatar = theUser.UserInfo.Avatar
                 };
                 return Helper.BuildResult(data);
             }
@@ -166,7 +169,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    token = theUser.Token,
+                    token = theUser.Token
                 };
                 return Helper.BuildResult(data);
             }
@@ -204,6 +207,7 @@ namespace Backend.Biz
                     job = theUser.UserInfo.Job,
                     website = theUser.UserInfo.Website,
                     birthday = theUser.UserInfo.Birthday,
+                    avatar = theUser.UserInfo.Avatar
                 };
                 return Helper.BuildResult(data);
             }
@@ -280,14 +284,12 @@ namespace Backend.Biz
                         uploadTime = file.UploadTime
                     }).OrderByDescending(t => t.uploadTime).ToArray();
 
-
                 var data = new
                 {
                     recentTask,
                     recenFile,
                     recentSchedule
                 };
-
 
                 return Helper.BuildResult(data);
             }

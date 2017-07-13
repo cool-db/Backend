@@ -12,7 +12,7 @@ namespace Backend.Biz
         {
             using (var context = new BackendContext())
             {
-                var user = context.Users.Where(u => u.Id == userId).Single();
+                var user = context.Users.Single(u => u.Id == userId);
 
                 context.TaskOperations.Add(new TaskOperation()
                 {
@@ -117,7 +117,7 @@ namespace Backend.Biz
                             gender = user.UserInfo.Gender,
                             avatar = user.UserInfo.Avatar,
                             phonenumber = user.UserInfo.Phonenumber,
-                            birthday = user.UserInfo.Birthday,
+                            birthday = user.UserInfo.Birthday
                         }).ToArray(),
                     progressId = theTask.ProgressId,
                     ddl = theTask.Ddl,
@@ -147,7 +147,7 @@ namespace Backend.Biz
                         state = subtask.State,
                         taskId = subtask.TaskId,
                         userId = subtask.UserId
-                    },
+                    }
                 };
                 return Helper.BuildResult(data);
             }
@@ -194,7 +194,7 @@ namespace Backend.Biz
                 var memberIds = (from user in theTask.Users
                     select new
                     {
-                        id = user.Id,
+                        id = user.Id
                     }).ToArray();
 
                 var data = new
@@ -233,7 +233,7 @@ namespace Backend.Biz
                         state = subtask.State,
                         taskId = subtask.TaskId,
                         userId = subtask.UserId
-                    },
+                    }
                 };
                 return Helper.BuildResult(data);
             }
@@ -324,14 +324,14 @@ namespace Backend.Biz
                                 state = subtask.State,
                                 taskId = subtask.TaskId,
                                 userId = subtask.UserId
-                            },
+                            }
                         });
                     }
                 }
 
                 var data = new
                 {
-                    tasks,
+                    tasks
                 };
                 return Helper.BuildResult(data);
             }
@@ -407,7 +407,7 @@ namespace Backend.Biz
                         state = subtask.State,
                         taskId = subtask.TaskId,
                         userId = subtask.UserId
-                    },
+                    }
                 };
                 return Helper.BuildResult(data);
             }
@@ -463,7 +463,7 @@ namespace Backend.Biz
                     subtaskContent = newSubTask.Content,
                     taskId = newSubTask.TaskId,
                     state = newSubTask.State,
-                    executorId = newSubTask.UserId,
+                    executorId = newSubTask.UserId
                 };
                 return Helper.BuildResult(data);
             }
@@ -542,7 +542,7 @@ namespace Backend.Biz
                     state = theSubtask.State,
                     taskId = theSubtask.Task.Id,
                     subtaskContent = theSubtask.Content,
-                    executorId = subtaskExecutorId,
+                    executorId = subtaskExecutorId
                 };
                 return Helper.BuildResult(data);
             }
@@ -587,7 +587,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    subtaskState = theSubtask.State,
+                    subtaskState = theSubtask.State
                 };
                 return Helper.BuildResult(data);
             }
@@ -609,7 +609,7 @@ namespace Backend.Biz
                     subtaskId = theSubtask.Id,
                     subtaskContent = theSubtask.Content,
                     state = theSubtask.State,
-                    executorId = theSubtask.UserId,
+                    executorId = theSubtask.UserId
                 };
                 return Helper.BuildResult(data);
             }
@@ -656,7 +656,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    participators,
+                    participators
                 };
                 return Helper.BuildResult(data);
             }
@@ -708,7 +708,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    participators,
+                    participators
                 };
                 return Helper.BuildResult(data);
             }
@@ -732,7 +732,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    members,
+                    members
                 };
                 return Helper.BuildResult(data);
             }
@@ -781,7 +781,7 @@ namespace Backend.Biz
                         id = comment.Id,
                         content = comment.Content,
                         userId = comment.UserId,
-                        taskId = comment.TaskId,
+                        taskId = comment.TaskId
                     }).ToArray();
                 var data = new
                 {
@@ -821,7 +821,7 @@ namespace Backend.Biz
                         id = comment.Id,
                         content = comment.Content,
                         userId = comment.UserId,
-                        taskId = comment.TaskId,
+                        taskId = comment.TaskId
                     }).ToArray();
                 var data = new
                 {
@@ -847,7 +847,7 @@ namespace Backend.Biz
                         id = comment.Id,
                         content = comment.Content,
                         userId = comment.UserId,
-                        taskId = comment.TaskId,
+                        taskId = comment.TaskId
                     }).ToArray();
                 var data = new
                 {
@@ -899,7 +899,7 @@ namespace Backend.Biz
                     ddl = theTask.Ddl,
                     emergencyType = theTask.EmergencyType,
                     state = theTask.State,
-                    progressId = theTask.ProgressId,
+                    progressId = theTask.ProgressId
                 };
 
                 return Helper.BuildResult(data);

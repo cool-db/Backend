@@ -65,7 +65,7 @@ namespace Backend.Biz
                         file.Id,
                         file.Name,
                         file.UploadTime,
-                        file.UserId,
+                        file.UserId
                     }).ToArray();
                 return Helper.BuildResult(data);
             }
@@ -99,7 +99,7 @@ namespace Backend.Biz
                     name = theFile.Name,
                     userId = theFile.UserId,
                     uploadTime = theFile.UploadTime,
-                    projectId = theFile.ProjectId,
+                    projectId = theFile.ProjectId
                 };
                 return Helper.BuildResult(data);
             }

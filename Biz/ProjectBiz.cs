@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Backend.Model;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -13,7 +12,7 @@ namespace Backend.Biz
         {
             using (var context = new BackendContext())
             {
-                var user = context.Users.Where(u => u.Id == userId).Single();
+                var user = context.Users.Single(u => u.Id == userId);
 
                 context.ProjectOperations.Add(new ProjectOperation()
                 {
@@ -54,7 +53,7 @@ namespace Backend.Biz
                 {
                     UserId = query.Single().Id,
                     ProjectId = newProject.Id,
-                    Permission = Permission.Creator,
+                    Permission = Permission.Creator
                 });
                 context.Projects.Add(newProject);
                 context.SaveChanges();
@@ -65,7 +64,7 @@ namespace Backend.Biz
                 {
                     projectId = newProject.Id,
                     projectName = newProject.Name,
-                    projectDescription = newProject.Description,
+                    projectDescription = newProject.Description
                 };
                 return Helper.BuildResult(data);
             }
@@ -132,7 +131,7 @@ namespace Backend.Biz
                 var data = new
                 {
                     projectId = theProject.Id,
-                    ownerId = theProject.OwnerId,
+                    ownerId = theProject.OwnerId
                 };
                 return Helper.BuildResult(data);
             }
@@ -193,7 +192,7 @@ namespace Backend.Biz
                 {
                     projectId = theProject.Id,
                     projectName = theProject.Name,
-                    projectDiscription = theProject.Description,
+                    projectDiscription = theProject.Description
                 };
                 return Helper.BuildResult(data);
             }
@@ -220,7 +219,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    projects,
+                    projects
                 };
                 return Helper.BuildResult(data);
             }
@@ -524,7 +523,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    progressList,
+                    progressList
                 };
                 return Helper.BuildResult(data);
             }
@@ -575,7 +574,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    progressList,
+                    progressList
                 };
                 return Helper.BuildResult(data);
             }
@@ -625,7 +624,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    progressList,
+                    progressList
                 };
                 return Helper.BuildResult(data);
             }
@@ -677,7 +676,7 @@ namespace Backend.Biz
 
                     var data = new
                     {
-                        progressList,
+                        progressList
                     };
                     return Helper.BuildResult(data);
                 }
@@ -697,7 +696,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
-                    progressList,
+                    progressList
                 };
                 return Helper.BuildResult(data);
             }

@@ -57,7 +57,7 @@ namespace Backend.Biz
                     endTime = newSchedule.EndTime,
                     repeatDaily = newSchedule.RepeatDaily,
                     repeatWeekly = newSchedule.RepeatWeekly,
-                    participatorIds = ids,
+                    participatorIds = ids
                 };
 
                 return Helper.BuildResult(data);
@@ -67,12 +67,11 @@ namespace Backend.Biz
         public static object DeleteSchedule(object json)
         {
             var body = Helper.DecodeToObject(json);
+            var scheduleId = int.Parse(body["scheduleId"].ToString());
+            var userId = int.Parse(body["userId"].ToString());
 
             using (var context = new BackendContext())
             {
-                var scheduleId = int.Parse(body["scheduleId"].ToString());
-                var userId = int.Parse(body["userId"].ToString());
-
                 var queryUser = context.Users.Where(u => u.Id == userId);
                 if (!queryUser.Any())
                     return Helper.Error(404, "用户不存在");
@@ -101,44 +100,43 @@ namespace Backend.Biz
 
         public static object UpdateSchedule(object json)
         {
-            var body = Helper.DecodeToObject(json);
-            var scheduleId = int.Parse(body["scheduleId"].ToString());
-            var userId = int.Parse(body["userId"].ToString());
+            var body = Helper.Decode(json);
+            var scheduleId = int.Parse(body["scheduleId"]);
+            var userId = int.Parse(body["userId"]);
 
             using (var context = new BackendContext())
             {
-                var scheduleName = body["scheduleName"].ToString();
-                var scheduleContent = body["scheduleContent"].ToString();
-                var location = body["location"].ToString();
-                var startTime = DateTime.Parse(body["startTime"].ToString());
-                var endTime = DateTime.Parse(body["endTime"].ToString());
-                var repeatDaily = bool.Parse(body["repeatDaily"].ToString());
-                var repeatWeekly = bool.Parse(body["repeatWeekly"].ToString());
-                var projectId = int.Parse(body["projectId"].ToString());
+                var queryUser = context.Users.Where(u => u.Id == userId);
+                if (!queryUser.Any())
+                    return Helper.Error(404, "用户不存在");
 
                 var querySchedule = context.Schedules.Where(schedule => schedule.Id == scheduleId);
                 if (!querySchedule.Any())
-                    return Helper.Error(404, "更新日程不存在");
+                    return Helper.Error(404, "修改的日程不存在");
+                var theSchedule = querySchedule.Single();
 
-                var queryProject = context.Projects.Where(project => project.Id == projectId);
-                if (!queryProject.Any())
-                    return Helper.Error(404, "更新日程所属项目不存在");
+                var theProject = context.Projects.Single(project => project.Id == theSchedule.ProjectId);
+                Console.WriteLine(userId);
+                Console.WriteLine(theSchedule.OwerId);
 
-                if (!Helper.CheckPermission(projectId, userId, true, OperationType.PUT))
+                if (!Helper.CheckPermission(theProject.Id, userId, userId == theSchedule.OwerId,
+                    OperationType.PUT))
                     return Helper.Error(401, "用户无操作权限");
 
-                var theSchedule = querySchedule.Single();
-                var theProject = queryProject.Single();
-
-                theSchedule.Content = scheduleContent;
-                theSchedule.EndTime = endTime;
-                theSchedule.StartTime = startTime;
-                theSchedule.Location = location;
-                theSchedule.Name = scheduleName;
-                theSchedule.Project = theProject;
-                theSchedule.ProjectId = projectId;
-                theSchedule.RepeatDaily = repeatDaily;
-                theSchedule.RepeatWeekly = repeatWeekly;
+                theSchedule.Content =
+                    body.ContainsKey("scheduleContent") ? body["scheduleContent"] : theSchedule.Content;
+                theSchedule.EndTime =
+                    body.ContainsKey("endTime") ? DateTime.Parse(body["endTime"]) : theSchedule.EndTime;
+                theSchedule.StartTime = body.ContainsKey("startTime")
+                    ? DateTime.Parse(body["startTime"])
+                    : theSchedule.StartTime;
+                theSchedule.Location =
+                    body.ContainsKey("location") ? body["location"] : theSchedule.Location;
+                theSchedule.Name = body.ContainsKey("scheduleName") ? body["scheduleName"] : theSchedule.Name;
+                theSchedule.RepeatDaily =
+                    body.ContainsKey("repeatDaily") ? bool.Parse(body["repeatDaily"]) : theSchedule.RepeatDaily;
+                theSchedule.RepeatWeekly =
+                    body.ContainsKey("repeatWeekly") ? bool.Parse(body["repeatWeekly"]) : theSchedule.RepeatWeekly;
 
                 context.SaveChanges();
 
@@ -151,8 +149,7 @@ namespace Backend.Biz
                     startTime = theSchedule.StartTime,
                     endTime = theSchedule.EndTime,
                     repeatDaily = theSchedule.RepeatDaily,
-                    repeatWeekly = theSchedule.RepeatWeekly,
-                    code = 200
+                    repeatWeekly = theSchedule.RepeatWeekly
                 };
 
                 return Helper.BuildResult(data);
@@ -168,31 +165,31 @@ namespace Backend.Biz
                 {
                     return Helper.Error(404, "日程不存在");
                 }
-                var dataList = new List<object>();
-                foreach (var theSchedule in querySchedule)
-                {
-                    var ids = new List<int>();
-                    foreach (var user in theSchedule.Users)
-                    {
-                        ids.Add(user.Id);
-                    }
-                    dataList.Add(new
-                    {
-                        scheduleId = theSchedule.Id,
-                        scheduleName = theSchedule.Name,
-                        scheduleContent = theSchedule.Content,
-                        location = theSchedule.Location,
-                        startTime = theSchedule.StartTime,
-                        endTime = theSchedule.EndTime,
-                        repeatDaily = theSchedule.RepeatDaily,
-                        repeatWeekly = theSchedule.RepeatWeekly,
-                        participatorsId = ids
-                    });
-                }
+                var theSchedule = querySchedule.Single();
+
                 var data = new
                 {
-                    dataList,
-                    code = 200
+                    scheduleId = theSchedule.Id,
+                    scheduleName = theSchedule.Name,
+                    scheduleContent = theSchedule.Content,
+                    location = theSchedule.Location,
+                    startTime = theSchedule.StartTime,
+                    endTime = theSchedule.EndTime,
+                    repeatDaily = theSchedule.RepeatDaily,
+                    repeatWeekly = theSchedule.RepeatWeekly,
+                    participatorsId = (from user in theSchedule.Users
+                        select new
+                        {
+                            id = user.Id,
+                            email = user.Email,
+                            name = user.UserInfo.Name,
+                            address = user.UserInfo.Address,
+                            gender = user.UserInfo.Gender,
+                            phonenumber = user.UserInfo.Phonenumber,
+                            job = user.UserInfo.Job,
+                            website = user.UserInfo.Website,
+                            birthday = user.UserInfo.Birthday
+                        }).ToArray()
                 };
                 return Helper.BuildResult(data);
             }
@@ -213,12 +210,12 @@ namespace Backend.Biz
                         startTime = schedule.StartTime,
                         endTime = schedule.EndTime,
                         repeatDaily = schedule.RepeatDaily,
-                        repeatWeekly = schedule.RepeatWeekly,
+                        repeatWeekly = schedule.RepeatWeekly
                     }).ToArray();
 
                 var data = new
                 {
-                    scheduleList,
+                    scheduleList
                 };
 
                 return Helper.BuildResult(data);
@@ -394,12 +391,12 @@ namespace Backend.Biz
                         startTime = schedule.StartTime,
                         endTime = schedule.EndTime,
                         repeatDaily = schedule.RepeatDaily,
-                        repeatWeekly = schedule.RepeatWeekly,
+                        repeatWeekly = schedule.RepeatWeekly
                     }).ToArray();
 
                 var data = new
                 {
-                    scheduleList,
+                    scheduleList
                 };
 
                 return Helper.BuildResult(data);
