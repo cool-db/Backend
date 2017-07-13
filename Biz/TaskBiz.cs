@@ -147,6 +147,8 @@ namespace Backend.Biz
                             name = file.Name,
                             projectId = file.ProjectId,
                             userId = file.UserId,
+                            ownerName = file.User.UserInfo.Name,
+                            avatar = file.User.UserInfo.Avatar,
                             uploadTime = file.UploadTime
                         }).ToArray(),
                     subtasks = from subtask in theTask.Subtasks
