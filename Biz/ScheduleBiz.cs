@@ -18,8 +18,10 @@ namespace Backend.Biz
 
             using (var context = new BackendContext())
             {
-                var users = new List<User>();
-                var ids = new List<int>();
+                var queryUser = context.Users.Where(u => u.Id == userId);
+                if (!queryUser.Any())
+                    return Helper.Error(404, "用户不存在");
+                var theUser = queryUser.Single();
 
                 if (!Helper.CheckPermission(projectId, userId, true, OperationType.POST))
                     return Helper.Error(401, "用户" + userId + "无操作权限");
@@ -30,7 +32,7 @@ namespace Backend.Biz
 
                 var newSchedule = new Schedule
                 {
-                    Users = users,
+                    Users = new List<User> {theUser},
                     Content = scheduleContent,
                     EndTime = body.ContainsKey("endTime")
                         ? DateTime.Parse(body["endTime"])
@@ -44,6 +46,7 @@ namespace Backend.Biz
                     ProjectId = projectId
                 };
                 context.Schedules.Add(newSchedule);
+                newSchedule.Users.Add(theUser);
                 queryProject.Single().Schedules.Add(newSchedule);
                 context.SaveChanges();
 
@@ -224,116 +227,124 @@ namespace Backend.Biz
 
         public static object AddParticipator(object json)
         {
-            var body = Helper.DecodeToObject(json);
+            var body = Helper.Decode(json);
 
             using (var context = new BackendContext())
             {
-                var scheduleId = int.Parse(body["scheduleId"].ToString());
-                var participatorIds = JArray.Parse(body["participatorIds"].ToString());
-                var operatorId = int.Parse(body["operatorId"].ToString());
+                var scheduleId = int.Parse(body["scheduleId"]);
+                var participatorId = int.Parse(body["participatorId"]);
+                var userId = int.Parse(body["userId"]);
 
-                var querySchedule = context.Schedules.Where(Schedule => Schedule.Id == scheduleId);
+
+                var querySchedule = context.Schedules.Where(s => s.Id == scheduleId);
                 if (!querySchedule.Any())
-                {
                     return Helper.Error(404, "日程不存在");
-                }
+                var theSchedule = querySchedule.Single();
 
-                var schedule = querySchedule.Single();
+                var queryUser = context.Users.Where(user => user.Id == participatorId);
+                if (!queryUser.Any())
+                    return Helper.Error(404, "用户" + participatorId + "不存在");
+                var theUser = queryUser.Single();
+
+                var queryParticipator = context.Users.Where(user => user.Id == participatorId);
+                if (!queryParticipator.Any())
+                    return Helper.Error(404, "用户" + participatorId + "不存在");
+                var theParticipator = queryParticipator.Single();
 
                 //check permission
-                if (!Helper.CheckPermission(scheduleId, operatorId, true, OperationType.POST))
-                    return Helper.Error(401, "用户" + operatorId + "无操作权限");
+                if (!Helper.CheckPermission(scheduleId, userId, true, OperationType.POST))
+                    return Helper.Error(401, "用户" + userId + "无操作权限");
 
-                foreach (var participatorId in participatorIds)
-                {
-                    var id = int.Parse(participatorId.ToString());
-                    var queryUser = context.Users.Where(user => user.Id == id);
+                if (theSchedule.Users.Contains(queryUser.Single()))
+                    return Helper.Error(417, "参与者" + participatorId + "已存在");
 
-                    if (!queryUser.Any())
-                    {
-                        return Helper.Error(404, "用户" + participatorId + "不存在");
-                    }
-
-                    if (schedule.Users.Contains(queryUser.Single()))
-                    {
-                        return Helper.Error(417, "参与者" + participatorId + "已存在");
-                    }
-
-                    schedule.Users.Add(queryUser.Single());
-                }
+                theSchedule.Users.Add(theParticipator);
                 context.SaveChanges();
-
-                var ids = new List<int>();
-                foreach (var participator in schedule.Users)
-                {
-                    ids.Add(participator.Id);
-                }
 
                 var data = new
                 {
-                    ids,
-                    code = 200
+                    scheduleId = theSchedule.Id,
+                    scheduleName = theSchedule.Name,
+                    scheduleContent = theSchedule.Content,
+                    location = theSchedule.Location,
+                    startTime = theSchedule.StartTime,
+                    endTime = theSchedule.EndTime,
+                    repeatDaily = theSchedule.RepeatDaily,
+                    repeatWeekly = theSchedule.RepeatWeekly,
+                    participatorsId = (from user in theSchedule.Users
+                        select new
+                        {
+                            id = user.Id,
+                            email = user.Email,
+                            name = user.UserInfo.Name,
+                            address = user.UserInfo.Address,
+                            gender = user.UserInfo.Gender,
+                            phonenumber = user.UserInfo.Phonenumber,
+                            job = user.UserInfo.Job,
+                            website = user.UserInfo.Website,
+                            birthday = user.UserInfo.Birthday
+                        }).ToArray()
                 };
-
                 return Helper.BuildResult(data);
             }
         }
 
         public static object DeleteParticipator(object json)
         {
-            var body = Helper.DecodeToObject(json);
+            var body = Helper.Decode(json);
 
             using (var context = new BackendContext())
             {
-                var scheduleId = int.Parse(body["scheduleId"].ToString());
-                var participatorIds = JArray.Parse(body["participatorIds"].ToString());
-                var operatorId = int.Parse(body["operatorId"].ToString());
+                var scheduleId = int.Parse(body["scheduleId"]);
+                var participatorId = int.Parse(body["participatorId"]);
+                var userId = int.Parse(body["userId"]);
 
-                var querySchedule = context.Schedules.Where(schedule => schedule.Id == scheduleId);
+
+                var querySchedule = context.Schedules.Where(s => s.Id == scheduleId);
                 if (!querySchedule.Any())
-                    return Helper.Error(401, "删除日程不存在");
+                    return Helper.Error(404, "日程不存在");
                 var theSchedule = querySchedule.Single();
 
-                if (!Helper.CheckPermission(theSchedule.Id, operatorId, true, OperationType.DELETE))
-                    return Helper.Error(401, "用户无操作权限");
+                var queryUser = context.Users.Where(user => user.Id == participatorId);
+                if (!queryUser.Any())
+                    return Helper.Error(404, "用户" + participatorId + "不存在");
+                var theUser = queryUser.Single();
 
-                foreach (var participatorId in participatorIds)
-                {
-                    var id = int.Parse(participatorId.ToString());
-                    var queryUser = context.Users.Where(user => user.Id == id);
+                var queryParticipator = context.Users.Where(user => user.Id == participatorId);
+                if (!queryParticipator.Any())
+                    return Helper.Error(404, "用户" + participatorId + "不存在");
+                var theParticipator = queryParticipator.Single();
 
-                    if (!queryUser.Any())
-                    {
-                        return Helper.Error(404, "用户" + participatorId + "不存在");
-                    }
+                //check permission
+                if (!Helper.CheckPermission(scheduleId, userId, true, OperationType.POST))
+                    return Helper.Error(401, "用户" + userId + "无操作权限");
 
-                    var theUser = queryUser.Single();
-                    if (!theSchedule.Users.Contains(theUser))
-                    {
-                        return Helper.Error(404, "用户" + participatorId + "未参与该日程");
-                    }
-
-                    if (id == theSchedule.OwerId)
-                    {
-                        return Helper.Error(401, "无法删除日程创建者");
-                    }
-
-                    theSchedule.Users.Remove(theUser);
-                }
-                context.SaveChanges();
-
-                var ids = new List<int>();
-                foreach (var user in theSchedule.Users)
-                {
-                    ids.Add(user.Id);
-                }
-
+                if (!theSchedule.Users.Contains(queryUser.Single()))
+                    return Helper.Error(417, "参与者" + participatorId + "未参与");
                 var data = new
                 {
-                    ids,
-                    code = 200
+                    scheduleId = theSchedule.Id,
+                    scheduleName = theSchedule.Name,
+                    scheduleContent = theSchedule.Content,
+                    location = theSchedule.Location,
+                    startTime = theSchedule.StartTime,
+                    endTime = theSchedule.EndTime,
+                    repeatDaily = theSchedule.RepeatDaily,
+                    repeatWeekly = theSchedule.RepeatWeekly,
+                    participatorsId = (from user in theSchedule.Users
+                        select new
+                        {
+                            id = user.Id,
+                            email = user.Email,
+                            name = user.UserInfo.Name,
+                            address = user.UserInfo.Address,
+                            gender = user.UserInfo.Gender,
+                            phonenumber = user.UserInfo.Phonenumber,
+                            job = user.UserInfo.Job,
+                            website = user.UserInfo.Website,
+                            birthday = user.UserInfo.Birthday
+                        }).ToArray()
                 };
-
                 return Helper.BuildResult(data);
             }
         }
@@ -348,26 +359,31 @@ namespace Backend.Biz
                 {
                     return Helper.Error(404, "日程不存在");
                 }
-
                 var theSchedule = querySchedule.Single();
-
-                var participatorList = new List<object>();
-
-                foreach (var participator in theSchedule.Users)
-                {
-                    participatorList.Add(new
-                    {
-                        participatorId = participator.Id,
-                        participatorName = participator.UserInfo.Name
-                    });
-                }
-
                 var data = new
                 {
-                    participatorList,
-                    code = 200
+                    scheduleId = theSchedule.Id,
+                    scheduleName = theSchedule.Name,
+                    scheduleContent = theSchedule.Content,
+                    location = theSchedule.Location,
+                    startTime = theSchedule.StartTime,
+                    endTime = theSchedule.EndTime,
+                    repeatDaily = theSchedule.RepeatDaily,
+                    repeatWeekly = theSchedule.RepeatWeekly,
+                    participatorsId = (from user in theSchedule.Users
+                        select new
+                        {
+                            id = user.Id,
+                            email = user.Email,
+                            name = user.UserInfo.Name,
+                            address = user.UserInfo.Address,
+                            gender = user.UserInfo.Gender,
+                            phonenumber = user.UserInfo.Phonenumber,
+                            job = user.UserInfo.Job,
+                            website = user.UserInfo.Website,
+                            birthday = user.UserInfo.Birthday
+                        }).ToArray()
                 };
-
                 return Helper.BuildResult(data);
             }
         }

@@ -101,6 +101,7 @@ namespace Backend.Biz
 
                 var data = new
                 {
+                    progressName = theTask.Progress.Name,
                     taskId = theTask.Id,
                     name = theTask.Name,
                     content = theTask.Content,
