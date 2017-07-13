@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using Backend.Model;
 using Newtonsoft.Json.Linq;
@@ -9,7 +8,7 @@ namespace Backend.Biz
 {
     public class TaskBiz
     {
-        public static void RecordTaskOperation(int userId, int taskId , string content)
+        public static void RecordTaskOperation(int userId, int taskId, string content)
         {
             using (var context = new BackendContext())
             {
@@ -17,7 +16,7 @@ namespace Backend.Biz
 
                 context.TaskOperations.Add(new TaskOperation()
                 {
-                    Content = "用户 " + user.Email + " "+ content,
+                    Content = "用户 " + user.Email + " " + content,
                     TaskId = taskId,
                     UserId = userId,
                     Time = DateTime.Now
@@ -25,7 +24,7 @@ namespace Backend.Biz
                 context.SaveChanges();
             }
         }
-        
+
         public static object CreateTask(object json)
         {
             var body = Helper.DecodeToObject(json);
@@ -70,7 +69,7 @@ namespace Backend.Biz
 
 
                 RecordTaskOperation(creatorId, newTask.Id, "创建了该任务");
-                
+
                 var data = new
                 {
                     taskId = newTask.Id,
@@ -79,7 +78,11 @@ namespace Backend.Biz
                     executorId = newTask.OwnerId,
                     progressId = newTask.ProgressId,
                     emergencyType = newTask.EmergencyType,
-                    ddl = newTask.Ddl
+                    ddl = newTask.Ddl,
+                    member = from user in newTask.Users
+                    select new
+                    {
+                    }
                 };
 
                 return Helper.BuildResult(data);
@@ -95,19 +98,6 @@ namespace Backend.Biz
                     return Helper.Error(404, "任务不存在");
 
                 var theTask = queryTask.Single();
-                var members = (from user in theTask.Users
-                    select new
-                    {
-                        id = user.Id,
-                        email = user.Email,
-                        name = user.UserInfo.Name,
-                        address = user.UserInfo.Website,
-                        job = user.UserInfo.Job,
-                        gender = user.UserInfo.Gender,
-                        avatar = user.UserInfo.Avatar,
-                        phonenumber = user.UserInfo.Phonenumber,
-                        birthday = user.UserInfo.Birthday,
-                    }).ToArray();
 
                 var data = new
                 {
@@ -116,9 +106,30 @@ namespace Backend.Biz
                     content = theTask.Content,
                     state = theTask.State,
                     executorId = theTask.OwnerId,
-                    members,
+                    members = (from user in theTask.Users
+                        select new
+                        {
+                            id = user.Id,
+                            email = user.Email,
+                            name = user.UserInfo.Name,
+                            address = user.UserInfo.Website,
+                            job = user.UserInfo.Job,
+                            gender = user.UserInfo.Gender,
+                            avatar = user.UserInfo.Avatar,
+                            phonenumber = user.UserInfo.Phonenumber,
+                            birthday = user.UserInfo.Birthday,
+                        }).ToArray(),
                     progressId = theTask.ProgressId,
-                    comments = theTask.Comments.ToArray(),
+                    ddl = theTask.Ddl,
+                    emergencyType = theTask.EmergencyType,
+                    comments = (from comment in theTask.Comments
+                        select new
+                        {
+                            id = comment.Id,
+                            content = comment.Content,
+                            time = comment.Time,
+                            userId = comment.UserId
+                        }).ToArray(),
                     files = (from file in theTask.Files
                         select new
                         {
@@ -128,9 +139,15 @@ namespace Backend.Biz
                             userId = file.UserId,
                             uploadTime = file.UploadTime
                         }).ToArray(),
-                    subtasks = theTask.Subtasks.ToArray(),
-                    ddl = theTask.Ddl,
-                    emergencyType = theTask.EmergencyType
+                    subtasks = from subtask in theTask.Subtasks
+                    select new
+                    {
+                        id = subtask.Id,
+                        content = subtask.Content,
+                        state = subtask.State,
+                        taskId = subtask.TaskId,
+                        userId = subtask.UserId
+                    },
                 };
                 return Helper.BuildResult(data);
             }
@@ -145,10 +162,6 @@ namespace Backend.Biz
             using (var context = new BackendContext())
             {
                 var queryUser = context.Users.Where(user => user.Id == userId);
-                if (!queryUser.Any())
-                    return Helper.Error(401, "executorId错误");
-
-                queryUser = context.Users.Where(user => user.Id == userId);
                 if (!queryUser.Any())
                     return Helper.Error(401, "userId错误");
 
@@ -174,7 +187,7 @@ namespace Backend.Biz
                 theTask.OwnerId = (body.ContainsKey("ownerId")) ? int.Parse(body["ownerId"]) : theTask.OwnerId;
 
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(userId, taskId, "更新了该任务的信息");
 
 
@@ -193,11 +206,34 @@ namespace Backend.Biz
                     executorId = theTask.OwnerId,
                     memberId = memberIds,
                     progressId = theTask.ProgressId,
-                    comments = theTask.Comments.ToArray(),
-                    files = theTask.Files.ToArray(),
-                    subtasks = theTask.Subtasks.ToArray(),
                     ddl = theTask.Ddl,
-                    emergencyType = theTask.EmergencyType
+                    emergencyType = theTask.EmergencyType,
+                    comments = (from comment in theTask.Comments
+                        select new
+                        {
+                            id = comment.Id,
+                            content = comment.Content,
+                            time = comment.Time,
+                            userId = comment.UserId
+                        }).ToArray(),
+                    files = (from file in theTask.Files
+                        select new
+                        {
+                            id = file.Id,
+                            name = file.Name,
+                            projectId = file.ProjectId,
+                            userId = file.UserId,
+                            uploadTime = file.UploadTime
+                        }).ToArray(),
+                    subtasks = from subtask in theTask.Subtasks
+                    select new
+                    {
+                        id = subtask.Id,
+                        content = subtask.Content,
+                        state = subtask.State,
+                        taskId = subtask.TaskId,
+                        userId = subtask.UserId
+                    },
                 };
                 return Helper.BuildResult(data);
             }
@@ -237,7 +273,7 @@ namespace Backend.Biz
             }
         }
 
-        
+
         public static object GetTaskList(int projectId)
         {
             using (var context = new BackendContext())
@@ -261,11 +297,34 @@ namespace Backend.Biz
                             state = task.State,
                             executorId = task.OwnerId,
                             progressId = task.ProgressId,
-                            comments = task.Comments.ToArray(),
-                            files = task.Files.ToArray(),
-                            subtasks = task.Subtasks.ToArray(),
                             ddl = task.Ddl,
-                            emergencyType = task.EmergencyType
+                            emergencyType = task.EmergencyType,
+                            comments = (from comment in task.Comments
+                                select new
+                                {
+                                    id = comment.Id,
+                                    content = comment.Content,
+                                    time = comment.Time,
+                                    userId = comment.UserId
+                                }).ToArray(),
+                            files = (from file in task.Files
+                                select new
+                                {
+                                    id = file.Id,
+                                    name = file.Name,
+                                    projectId = file.ProjectId,
+                                    userId = file.UserId,
+                                    uploadTime = file.UploadTime
+                                }).ToArray(),
+                            subtasks = from subtask in task.Subtasks
+                            select new
+                            {
+                                id = subtask.Id,
+                                content = subtask.Content,
+                                state = subtask.State,
+                                taskId = subtask.TaskId,
+                                userId = subtask.UserId
+                            },
                         });
                     }
                 }
@@ -309,7 +368,7 @@ namespace Backend.Biz
                     theTask.State = bool.Parse(body["state"]);
 
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(userId, taskId, "更新了该任务的状态");
 
 
@@ -321,11 +380,34 @@ namespace Backend.Biz
                     state = theTask.State,
                     executorId = theTask.OwnerId,
                     progressId = theTask.ProgressId,
-                    comments = theTask.Comments.ToArray(),
-                    files = theTask.Files.ToArray(),
-                    subtasks = theTask.Subtasks.ToArray(),
                     ddl = theTask.Ddl,
-                    emergencyType = theTask.EmergencyType
+                    emergencyType = theTask.EmergencyType,
+                    comments = (from comment in theTask.Comments
+                        select new
+                        {
+                            id = comment.Id,
+                            content = comment.Content,
+                            time = comment.Time,
+                            userId = comment.UserId
+                        }).ToArray(),
+                    files = (from file in theTask.Files
+                        select new
+                        {
+                            id = file.Id,
+                            name = file.Name,
+                            projectId = file.ProjectId,
+                            userId = file.UserId,
+                            uploadTime = file.UploadTime
+                        }).ToArray(),
+                    subtasks = from subtask in theTask.Subtasks
+                    select new
+                    {
+                        id = subtask.Id,
+                        content = subtask.Content,
+                        state = subtask.State,
+                        taskId = subtask.TaskId,
+                        userId = subtask.UserId
+                    },
                 };
                 return Helper.BuildResult(data);
             }
@@ -371,7 +453,7 @@ namespace Backend.Biz
 
                 theTask.Subtasks.Add(newSubTask);
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(userId, taskId, "创建了子任务:" + newSubTask.Content);
 
 
@@ -415,7 +497,7 @@ namespace Backend.Biz
 
                 context.Subtasks.Remove(theSubtask);
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(userId, theSubtask.TaskId, "删除了子任务:" + theSubtask.Content);
 
 
@@ -450,7 +532,7 @@ namespace Backend.Biz
                 }
 
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(subtaskExecutorId, theSubtask.TaskId, "更新了了子任务:" + theSubtask.Content + "的信息");
 
 
@@ -499,7 +581,7 @@ namespace Backend.Biz
 //                }
 
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(userId, theSubtask.TaskId, "更新了了子任务:" + theSubtask.Content + "的状态");
 
 
@@ -561,7 +643,7 @@ namespace Backend.Biz
                 theTask.Users.Add(theParticipator);
 
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(participatorId, taskId, "给该任务增加了新成员：" + theParticipator.Email);
 
 
@@ -613,7 +695,7 @@ namespace Backend.Biz
                 }
 
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(participatorId, taskId, "给该任务删除了成员：" + theParticipator.Email);
 
 
@@ -662,44 +744,45 @@ namespace Backend.Biz
             var body = Helper.Decode(json);
             var taskId = int.Parse(body["taskId"]);
             var content = body["content"];
-            var time = DateTime.Parse(body["time"]);
             var userId = int.Parse(body["userId"]);
 
             using (var context = new BackendContext())
             {
-                var taskQuery = context.Users.Where(user => user.Id == userId);
+                var taskQuery = context.Tasks.Where(t => t.Id == taskId);
+
                 if (!taskQuery.Any())
                     return Helper.Error(404, "任务不存在");
+                var theTask = taskQuery.Single();
 
                 var userQuery = context.Users.Where(user => user.Id == userId);
                 if (!userQuery.Any())
                     return Helper.Error(404, "用户不存在");
+
+                if (!theTask.Progress.Project.Users.Contains(userQuery.Single()))
+                    return Helper.Error(401, "用户未参加这个项目");
 
                 var newComment = new Comment
                 {
                     TaskId = taskId,
                     UserId = userId,
                     Content = content,
-                    Time = time
+                    Time = DateTime.Now
                 };
 
                 context.Comments.Add(newComment);
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(userId, taskId, "添加了评论：" + content);
 
 
-                var theTask = taskQuery.Single();
-                var comments = new List<object>();
-                foreach (var c in theTask.Comments)
-                {
-                    comments.Add(new
+                var comments = (from comment in theTask.Comments
+                    select new
                     {
-                        id = c.Id,
-                        content = c.Content
-                    });
-                }
-
+                        id = comment.Id,
+                        content = comment.Content,
+                        userId = comment.UserId,
+                        taskId = comment.TaskId,
+                    }).ToArray();
                 var data = new
                 {
                     comments
@@ -713,7 +796,6 @@ namespace Backend.Biz
         {
             var body = Helper.Decode(json);
             var commentId = int.Parse(body["commentId"]);
-            var taskId = int.Parse(body["taskId"]);
             var userId = int.Parse(body["userId"]);
 
             using (var context = new BackendContext())
@@ -721,22 +803,30 @@ namespace Backend.Biz
                 var queryComment = context.Comments.Where(comment => comment.Id == commentId);
                 if (!queryComment.Any())
                     return Helper.Error(404, "评论不存在");
-
-                var queryTask = context.Tasks.Where(task => task.Id == taskId);
-                if (!queryTask.Any())
-                    return Helper.Error(404, "任务不存在");
-
                 var theComment = queryComment.Single();
+                var theTask = theComment.Task;
+
                 if (theComment.UserId != userId)
                     return Helper.Error(401, "该用户未发表该评论");
 
                 context.Comments.Remove(theComment);
                 context.SaveChanges();
-                
-                RecordTaskOperation(userId, taskId, "删除了了评论：" + theComment.Content);
+
+                RecordTaskOperation(userId, theTask.Id, "删除了了评论：" + theComment.Content);
 
 
-                var data = new { };
+                var comments = (from comment in theTask.Comments
+                    select new
+                    {
+                        id = comment.Id,
+                        content = comment.Content,
+                        userId = comment.UserId,
+                        taskId = comment.TaskId,
+                    }).ToArray();
+                var data = new
+                {
+                    comments
+                };
                 return Helper.BuildResult(data);
             }
         }
@@ -751,16 +841,14 @@ namespace Backend.Biz
 
                 var theTask = queryTask.Single();
 
-                var comments = new List<object>();
-                foreach (var comment in theTask.Comments)
-                {
-                    comments.Add(new
+                var comments = (from comment in theTask.Comments
+                    select new
                     {
                         id = comment.Id,
-                        content = comment.Content
-                    });
-                }
-
+                        content = comment.Content,
+                        userId = comment.UserId,
+                        taskId = comment.TaskId,
+                    }).ToArray();
                 var data = new
                 {
                     comments
@@ -799,7 +887,7 @@ namespace Backend.Biz
                 theProgressTo.Tasks.Add(theTask);
 
                 context.SaveChanges();
-                
+
                 RecordTaskOperation(userId, taskId, "修改了任务到：" + theProgress.Name);
 
 
@@ -811,7 +899,7 @@ namespace Backend.Biz
                     ddl = theTask.Ddl,
                     emergencyType = theTask.EmergencyType,
                     state = theTask.State,
-                    progressId = theTask.ProgressId
+                    progressId = theTask.ProgressId,
                 };
 
                 return Helper.BuildResult(data);
@@ -856,9 +944,8 @@ namespace Backend.Biz
 
                 theFile.Tasks.Add(theTask);
                 context.SaveChanges();
-                
-                RecordTaskOperation(userId, taskId, "把文件" + theFile.Name +"关联到该任务");
 
+                RecordTaskOperation(userId, taskId, "把文件" + theFile.Name + "关联到该任务");
 
 
                 var data = (from file in theTask.Files
@@ -912,8 +999,8 @@ namespace Backend.Biz
 
                 theFile.Tasks.Remove(theTask);
                 context.SaveChanges();
-                
-                RecordTaskOperation(userId, taskId, "把文件" + theFile.Name +"和该任务解除关联");
+
+                RecordTaskOperation(userId, taskId, "把文件" + theFile.Name + "和该任务解除关联");
 
 
                 var data = (from file in theTask.Files

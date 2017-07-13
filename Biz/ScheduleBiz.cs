@@ -10,56 +10,37 @@ namespace Backend.Biz
     {
         public static object CreateSchedule(object json)
         {
-            var body = Helper.DecodeToObject(json);
-            var scheduleName = body["scheduleName"].ToString();
-            var scheduleContent = body["scheduleContent"].ToString();
-            var location = body["location"].ToString();
-            var startTime = DateTime.Parse(body["startTime"].ToString());
-            var endTime = DateTime.Parse(body["endTime"].ToString());
-            var repeatDaily = bool.Parse(body["repeatDaily"].ToString());
-            var repeatWeekly = bool.Parse(body["repeatWeekly"].ToString());
-            var participatorIds = JArray.Parse(body["participatorIds"].ToString());
-            var creatorId = int.Parse(body["creatorId"].ToString());
-            var projectId = int.Parse(body["projectId"].ToString());
+            var body = Helper.Decode(json);
+            var scheduleName = body["scheduleName"];
+            var scheduleContent = body["scheduleContent"];
+            var userId = int.Parse(body["userId"]);
+            var projectId = int.Parse(body["projectId"]);
 
             using (var context = new BackendContext())
             {
                 var users = new List<User>();
                 var ids = new List<int>();
-                foreach (var participatorId in participatorIds)
-                {
-                    var id = int.Parse(participatorId.ToString());
-                    var queryUser = context.Users.Where(user => user.Id == id);
 
-                    if (!queryUser.Any())
-                        return Helper.Error(404, "用户" + participatorId + "不存在");
-
-                    users.Add(queryUser.Single());
-
-                    ids.Add(id);
-                }
-
-                //check permission
-                if (!Helper.CheckPermission(projectId, creatorId, true, OperationType.POST))
-                    return Helper.Error(401, "用户" + creatorId + "无操作权限");
+                if (!Helper.CheckPermission(projectId, userId, true, OperationType.POST))
+                    return Helper.Error(401, "用户" + userId + "无操作权限");
 
                 var queryProject = context.Projects.Where(project => project.Id == projectId);
                 if (!queryProject.Any())
-                    return Helper.Error(401, "日程所属项目不存在");
+                    return Helper.Error(404, "日程所属项目不存在");
 
-
-                //var users = participatorIds.Select(participatorId => context.Users.Single(user => user.Id == int.Parse(participatorId))).ToList();
                 var newSchedule = new Schedule
                 {
                     Users = users,
                     Content = scheduleContent,
-                    EndTime = endTime,
-                    StartTime = startTime,
-                    Location = location,
+                    EndTime = body.ContainsKey("endTime")
+                        ? DateTime.Parse(body["endTime"])
+                        : (body.ContainsKey("startTime") ? DateTime.Parse(body["startTime"]) : DateTime.Now),
+                    StartTime = body.ContainsKey("startTime") ? DateTime.Parse(body["startTime"]) : DateTime.Now,
+                    Location = body.ContainsKey("location") ? body["location"] : "",
                     Name = scheduleName,
-                    OwerId = creatorId,
-                    RepeatDaily = repeatDaily,
-                    RepeatWeekly = repeatWeekly,
+                    OwerId = userId,
+                    RepeatDaily = body.ContainsKey("repeatDaily") && bool.Parse(body["repeatDaily"]),
+                    RepeatWeekly = body.ContainsKey("repeatWeekly") && bool.Parse(body["repeatWeekly"]),
                     ProjectId = projectId
                 };
                 context.Schedules.Add(newSchedule);
@@ -77,7 +58,6 @@ namespace Backend.Biz
                     repeatDaily = newSchedule.RepeatDaily,
                     repeatWeekly = newSchedule.RepeatWeekly,
                     participatorIds = ids,
-                    code = 200
                 };
 
                 return Helper.BuildResult(data);
@@ -91,21 +71,26 @@ namespace Backend.Biz
             using (var context = new BackendContext())
             {
                 var scheduleId = int.Parse(body["scheduleId"].ToString());
-                var operatorId = int.Parse(body["operatorId"].ToString());
+                var userId = int.Parse(body["userId"].ToString());
+
+                var queryUser = context.Users.Where(u => u.Id == userId);
+                if (!queryUser.Any())
+                    return Helper.Error(404, "用户不存在");
 
                 var querySchedule = context.Schedules.Where(schedule => schedule.Id == scheduleId);
                 if (!querySchedule.Any())
                     return Helper.Error(404, "删除日程不存在");
                 var theSchedule = querySchedule.Single();
 
-                var queryProject = context.Projects.Where(project => project.Id == querySchedule.Single().Id);
-                if (!queryProject.Any())
-                    return Helper.Error(404, "删除日程所属项目不存在");
+                var theProject = context.Projects.Single(project => project.Id == theSchedule.ProjectId);
+                Console.WriteLine(userId);
+                Console.WriteLine(theSchedule.OwerId);
 
-                if (!Helper.CheckPermission(queryProject.Single().Id, operatorId, true, OperationType.DELETE))
+                if (!Helper.CheckPermission(theProject.Id, userId, userId == theSchedule.OwerId,
+                    OperationType.DELETE))
                     return Helper.Error(401, "用户无操作权限");
 
-                queryProject.Single().Schedules.Remove(theSchedule);
+                theProject.Schedules.Remove(theSchedule);
                 context.Schedules.Remove(theSchedule);
 
                 context.SaveChanges();
@@ -117,11 +102,11 @@ namespace Backend.Biz
         public static object UpdateSchedule(object json)
         {
             var body = Helper.DecodeToObject(json);
+            var scheduleId = int.Parse(body["scheduleId"].ToString());
+            var userId = int.Parse(body["userId"].ToString());
 
             using (var context = new BackendContext())
             {
-                var scheduleId = int.Parse(body["scheduleId"].ToString());
-                var operatorId = int.Parse(body["operatorId"].ToString());
                 var scheduleName = body["scheduleName"].ToString();
                 var scheduleContent = body["scheduleContent"].ToString();
                 var location = body["location"].ToString();
@@ -139,7 +124,7 @@ namespace Backend.Biz
                 if (!queryProject.Any())
                     return Helper.Error(404, "更新日程所属项目不存在");
 
-                if (!Helper.CheckPermission(projectId, operatorId, true, OperationType.PUT))
+                if (!Helper.CheckPermission(projectId, userId, true, OperationType.PUT))
                     return Helper.Error(401, "用户无操作权限");
 
                 var theSchedule = querySchedule.Single();

@@ -10,7 +10,7 @@ namespace Backend.Model
         public BackendContext() : base("Backend")
         {
             Database.SetInitializer(new CreateDatabaseIfNotExists<BackendContext>());
-            Database.Log = Helper.Log;
+//            Database.Log = Helper.Log;
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

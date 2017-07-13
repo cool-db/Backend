@@ -53,6 +53,7 @@ namespace Backend.Biz
                     id = theUser.Id,
                     token = theUser.Token,
                     name = theUser.UserInfo.Name,
+                    avatar = theUser.UserInfo.Avatar
                 };
                 return Helper.BuildResult(data);
             }
@@ -252,7 +253,7 @@ namespace Backend.Biz
         {
             using (var context = new BackendContext())
             {
-                var recentTask =  (from task in context.Tasks
+                var recentTask = (from task in context.Tasks
                     where task.OwnerId == userId
                     select new
                     {
@@ -260,8 +261,8 @@ namespace Backend.Biz
                         name = task.Name,
                         ddl = task.Ddl
                     }).OrderByDescending(t => t.ddl).ToArray();
-                
-                var recentSchedule =  (from s in context.Schedules
+
+                var recentSchedule = (from s in context.Schedules
                     where s.OwerId == userId
                     select new
                     {
@@ -269,8 +270,8 @@ namespace Backend.Biz
                         name = s.Name,
                         endTime = s.EndTime
                     }).OrderByDescending(t => t.endTime).ToArray();
-                
-                var recenFile =  (from file in context.File
+
+                var recenFile = (from file in context.File
                     where file.UserId == userId
                     select new
                     {
@@ -286,13 +287,10 @@ namespace Backend.Biz
                     recenFile,
                     recentSchedule
                 };
-                    
-                
-                return Helper.BuildResult(data);
 
+
+                return Helper.BuildResult(data);
             }
-            
         }
-        
     }
 }

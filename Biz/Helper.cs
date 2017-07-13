@@ -95,10 +95,7 @@ namespace Backend.Biz
 
                     case OperationType.DELETE:
                     case OperationType.PUT:
-                        if (permission != Permission.Participant)
-                            return true;
-                        else
-                            return false;
+                        return permission != Permission.Participant;
                 }
             }
 
