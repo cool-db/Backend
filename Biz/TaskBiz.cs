@@ -938,7 +938,7 @@ namespace Backend.Biz
 
                 var flag = userId == queryTask.Single().OwnerId;
 
-                if (!Helper.CheckPermission(theTask.Progress.Project.Id, userId, flag, OperationType.PUT))
+                if (!Helper.CheckPermission(theTask.Progress.Project.Id, userId, flag, OperationType.SPECIAL))
                 {
                     return Helper.Error(401, "无权限");
                 }
