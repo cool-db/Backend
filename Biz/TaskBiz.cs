@@ -188,7 +188,10 @@ namespace Backend.Biz
                 theTask.Ddl = (body.ContainsKey("ddl")) ? DateTime.Parse(body["ddl"]) : theTask.Ddl;
                 theTask.State = (body.ContainsKey("state")) ? bool.Parse(body["state"]) : theTask.State;
                 theTask.OwnerId = (body.ContainsKey("ownerId")) ? int.Parse(body["ownerId"]) : theTask.OwnerId;
-
+                theTask.EmergencyType = (body.ContainsKey("emergencyType"))
+                    ? (Emergency) int.Parse(body["emergencyType"])
+                    : theTask.EmergencyType;
+                
                 context.SaveChanges();
 
                 RecordTaskOperation(userId, taskId, "更新了该任务的信息");
