@@ -12,59 +12,58 @@ namespace Backend.Controller
         {
             return TaskBiz.CreateTask(json);
         }
-        
+
         [HttpDelete]
         [Route("api/task")]
         public object DeleteTask(object json)
         {
             return TaskBiz.DeleteTask(json);
         }
-        
+
         [HttpGet]
         [Route("api/task")]
-        public object GetInfo(int projectId, int taskId)
+        public object GetInfo(int taskId)
         {
-            return TaskBiz.GetInfo(projectId, taskId);
+            return TaskBiz.GetInfo(taskId);
         }
-        
+
         [HttpPut]
         [Route("api/task")]
         public object UpdateInfo(object json)
         {
             return TaskBiz.UpdateInfo(json);
         }
-        
-        
+
+
         [HttpPost]
         [Route("api/task/comment/")]
         public object AddComment(object json)
         {
             return TaskBiz.AddComment(json);
         }
-        
+
         [HttpDelete]
         [Route("api/task/comment/")]
         public object DeleteComment(object json)
         {
             return TaskBiz.DeleteComment(json);
         }
-        
+
         [HttpGet]
         [Route("api/task/comment/list")]
         public object GetCommentList(int taskId)
         {
             return TaskBiz.GetCommentList(taskId);
         }
-        
 
-        
+
         [HttpGet]
         [Route("api/task/list")]
-        public object GetTaskList(int projectId, int userId)
+        public object GetTaskList(int projectId)
         {
-            return TaskBiz.GetTaskList(projectId, userId);
+            return TaskBiz.GetTaskList(projectId);
         }
-        
+
 
         [HttpPut]
         [Route("api/task/state")]
@@ -72,28 +71,28 @@ namespace Backend.Controller
         {
             return TaskBiz.UpdateState(json);
         }
-        
+
         [HttpPost]
         [Route("api/subtask")]
         public object CreateSubTask(object json)
         {
             return TaskBiz.CreateSubTask(json);
         }
-        
+
         [HttpDelete]
         [Route("api/subtask")]
         public object DeleteSubTask(object json)
         {
             return TaskBiz.DeleteSubTask(json);
         }
-        
+
         [HttpPut]
         [Route("api/subtask")]
         public object UpdateSubtaskInfo(object json)
         {
             return TaskBiz.UpdateSubtaskInfo(json);
         }
-        
+
         [HttpPut]
         [Route("api/subtask/state")]
         public object UpdateSubtaskState(object json)
@@ -107,21 +106,21 @@ namespace Backend.Controller
         {
             return TaskBiz.GetSubtaskList(subtaskId);
         }
-        
+
         [HttpPost]
         [Route("api/task/participator")]
         public object AddMember(object json)
         {
             return TaskBiz.AddMember(json);
         }
-        
+
         [HttpDelete]
         [Route("api/task/participator")]
         public object DeleteMember(object json)
         {
             return TaskBiz.DeleteMember(json);
         }
-        
+
         [HttpGet]
         [Route("api/task/participator/list")]
         public object GetMemberList(int taskId)
@@ -135,6 +134,5 @@ namespace Backend.Controller
         {
             return TaskBiz.ChangeProgress(json);
         }
-        
     }
 }
