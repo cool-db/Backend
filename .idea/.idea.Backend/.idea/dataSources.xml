@@ -1,14 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="backend" uuid="c2b2b871-b41e-4b71-92d8-81d7d7afaaf4">
-      <driver-ref>oracle</driver-ref>
-      <synchronize>true</synchronize>
-      <auto-commit>false</auto-commit>
-      <jdbc-driver>oracle.jdbc.OracleDriver</jdbc-driver>
-      <jdbc-url>jdbc:oracle:thin:@123.207.222.112:1521:orcl</jdbc-url>
-    </data-source>
-    <data-source source="LOCAL" name="fuck" uuid="53b01f80-b9cc-462b-85f3-b3904eb51aff">
+    <data-source source="LOCAL" name="@123.207.222.112" uuid="554b166d-2237-4e4b-90e0-1eea2e89909c">
       <driver-ref>oracle</driver-ref>
       <synchronize>true</synchronize>
       <auto-commit>false</auto-commit>
