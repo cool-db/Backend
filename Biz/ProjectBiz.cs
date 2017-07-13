@@ -369,7 +369,9 @@ namespace Backend.Biz
                     {
                         id = theProjectUser.Id,
                         name = theProjectUser.UserInfo.Name,
-                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId==projectId).Permission
+                        permission = theProjectUser.UserPermissons.Single(p => p.ProjectId==projectId).Permission,
+                        email = theProjectUser.Email,
+                        avatar = theProjectUser.UserInfo.Avatar
                     }).ToArray();
 
                 var data = new
