@@ -222,7 +222,7 @@ namespace Backend.Biz
                     return Helper.Error(404, "该用户不存在");
                 var data = new
                 {
-                    avatar = query.Single().UserInfo.Avatar
+                    avatar = "data:image/png;base64," + query.Single().UserInfo.Avatar
                 };
                 return Helper.BuildResult(data);
             }
