@@ -1011,7 +1011,9 @@ namespace Backend.Biz
                         name = file.Name,
                         projectId = file.ProjectId,
                         userId = file.UserId,
-                        uploadTime = file.UploadTime
+                        uploadTime = file.UploadTime,
+                        avatar=file.User.UserInfo.Avatar,
+                        userName=file.User.UserInfo.Name,
                     }).ToArray();
                 return Helper.BuildResult(data);
             }
