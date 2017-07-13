@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Backend.Model;
@@ -132,7 +132,7 @@ namespace Backend.Biz
                 var data = new
                 {
                     id = theUser.Id,
-                    email=theUser.Email,
+                    email = theUser.Email,
                     name = theUser.UserInfo.Name,
                     address = theUser.UserInfo.Address,
                     gender = theUser.UserInfo.Gender,
@@ -203,6 +203,46 @@ namespace Backend.Biz
                     job = theUser.UserInfo.Job,
                     website = theUser.UserInfo.Website,
                     birthday = theUser.UserInfo.Birthday,
+                };
+                return Helper.BuildResult(data);
+            }
+        }
+
+        public static object GetAvatar(int userId)
+        {
+            using (var context = new BackendContext())
+            {
+                var query = context.Users.Where(user => user.Id == userId);
+                if (!query.Any())
+                    return Helper.Error(404, "该用户不存在");
+                var data = new
+                {
+                    avatar = query.Single().UserInfo.Avatar
+                };
+                return Helper.BuildResult(data);
+            }
+        }
+
+        public static object SetAvatar(object json)
+        {
+            var body = Helper.Decode(json);
+            var id = int.Parse(body["id"]);
+            var avatar = body["avatar"];
+
+            using (var context = new BackendContext())
+            {
+                var query = context.Users.Where(user => user.Id == id);
+                if (!query.Any())
+                    return Helper.Error(404, "该用户不存在");
+                var theUser = query.Single();
+                var theInfo = theUser.UserInfo;
+                theInfo.Avatar = avatar;
+                context.SaveChanges();
+                var data = new
+                {
+                    id = theUser.Id,
+                    name = theInfo.Name,
+                    avatar = theInfo.Avatar
                 };
                 return Helper.BuildResult(data);
             }

@@ -134,5 +134,19 @@ namespace Backend.Controller
         {
             return TaskBiz.ChangeProgress(json);
         }
+        
+        [HttpPost]
+        [Route("api/task/attachment")]
+        public object AddAttachment(object json)
+        {
+            return TaskBiz.AddAttachment(json);
+        }
+        
+        [HttpDelete]
+        [Route("api/task/attachment")]
+        public object DeleteAttachment(object json)
+        {
+            return TaskBiz.DeleteAttachment(json);
+        }
     }
 }

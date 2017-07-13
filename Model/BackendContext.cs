@@ -15,7 +15,7 @@ namespace Backend.Model
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("BACKEND");
+            modelBuilder.HasDefaultSchema("FUCK");
             base.OnModelCreating(modelBuilder); //todo
         }
 

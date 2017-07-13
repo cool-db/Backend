@@ -49,9 +49,9 @@ namespace Backend.Controller
         
         [HttpGet]
         [Route("api/file/list")]
-        public object GetList(int taskId)
+        public object GetList(int projectId)
         {
-            return FileBiz.GetList(taskId);
+            return FileBiz.GetList(projectId);
         }
     }
 }

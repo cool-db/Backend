@@ -446,7 +446,9 @@ namespace Backend.Biz
                     select new
                     {
                         id = theProjectUser.Id,
-                        name = theProjectUser.UserInfo.Name
+                        name = theProjectUser.UserInfo.Name,
+                        permission=theProjectUser.UserPermissons.Single(p=>p.ProjectId==projectId).Permission
+                            
                     }).ToArray();
 
                 var data = new

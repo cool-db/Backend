@@ -1,4 +1,4 @@
-﻿﻿using System.Web.Http;
+﻿using System.Web.Http;
 using Backend.Biz;
 using Backend.Model;
 
@@ -60,7 +60,7 @@ namespace Backend.Controller
         {
             return ProjectBiz.AddMember(json);
         }
-        
+
         [HttpDelete]
         [Route("api/project/member")]
         public object DeleteMember(object json)
@@ -92,7 +92,7 @@ namespace Backend.Controller
         {
             return ProjectBiz.UpdatePermission(json);
         }
-        
+
         #endregion
 
         #region progress
@@ -103,35 +103,34 @@ namespace Backend.Controller
         {
             return ProjectBiz.CreateProgress(json);
         }
-        
+
         [HttpDelete]
         [Route("api/project/progress")]
         public object DeleteProgress(object json)
         {
             return ProjectBiz.DeleteProgress(json);
         }
-        
+
         [HttpPut]
         [Route("api/project/progress/name")]
         public object UpdateProgressName(object json)
         {
             return ProjectBiz.UpdateProgressName(json);
         }
-        
+
         [HttpPut]
         [Route("api/project/progress/order")]
         public object UpdateProgressOrder(object json)
         {
             return ProjectBiz.UpdateProgressOrder(json);
         }
-        
+
         [HttpGet]
         [Route("api/project/progress/list")]
         public object GetProgressList(int projectId)
         {
             return ProjectBiz.GetProgressList(projectId);
         }
-        
 
         #endregion
     }

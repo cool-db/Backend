@@ -48,6 +48,19 @@ namespace Backend.Controller
             return UserBiz.GetInfo(id);
         }
         
+        [HttpGet]
+        [Route("api/user/avatar")]
+        public object GetAvatar(int id)
+        {
+            return UserBiz.GetAvatar(id);
+        }
+        
+        [HttpPut]
+        [Route("api/user/avatar")]
+        public object SetAvatar(object json)
+        {
+            return UserBiz.SetAvatar(json);
+        }
         
         [HttpPut]
         [Route("api/user/pwd")]

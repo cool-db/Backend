@@ -35,7 +35,8 @@ namespace Backend.Biz
                     Content = content,
                     OwnerId = creatorId,
                     State = false, //false代表未完成
-                    EmergencyType = Emergency.Least
+                    EmergencyType = Emergency.Least,
+                    Ddl = DateTime.Now
                 };
 
                 newTask.Users.Add(queryUser.Single());
@@ -58,7 +59,8 @@ namespace Backend.Biz
                     state = newTask.State,
                     executorId = newTask.OwnerId,
                     progressId = newTask.ProgressId,
-                    emergencyType = newTask.EmergencyType
+                    emergencyType = newTask.EmergencyType,
+                    ddl = newTask.Ddl
                 };
 
                 return Helper.BuildResult(data);
@@ -74,11 +76,18 @@ namespace Backend.Biz
                     return Helper.Error(404, "任务不存在");
 
                 var theTask = queryTask.Single();
-
-                var memberIds = (from user in theTask.Users
+                var members = (from user in theTask.Users
                     select new
                     {
                         id = user.Id,
+                        email = user.Email,
+                        name = user.UserInfo.Name,
+                        address = user.UserInfo.Website,
+                        job = user.UserInfo.Job,
+                        gender = user.UserInfo.Gender,
+                        avatar = user.UserInfo.Avatar,
+                        phonenumber = user.UserInfo.Phonenumber,
+                        birthday = user.UserInfo.Birthday,
                     }).ToArray();
 
                 var data = new
@@ -88,10 +97,18 @@ namespace Backend.Biz
                     content = theTask.Content,
                     state = theTask.State,
                     executorId = theTask.OwnerId,
-                    memberId = memberIds,
+                    members,
                     progressId = theTask.ProgressId,
                     comments = theTask.Comments.ToArray(),
-                    files = theTask.Files.ToArray(),
+                    files = (from file in theTask.Files
+                        select new
+                        {
+                            id = file.Id,
+                            name = file.Name,
+                            projectId = file.ProjectId,
+                            userId = file.UserId,
+                            uploadTime = file.UploadTime
+                        }).ToArray(),
                     subtasks = theTask.Subtasks.ToArray(),
                     ddl = theTask.Ddl,
                     emergencyType = theTask.EmergencyType
@@ -151,7 +168,7 @@ namespace Backend.Biz
                     name = theTask.Name,
                     content = theTask.Content,
                     state = theTask.State,
-                    ownerId = theTask.OwnerId,
+                    executorId = theTask.OwnerId,
                     memberId = memberIds,
                     progressId = theTask.ProgressId,
                     comments = theTask.Comments.ToArray(),
@@ -219,7 +236,7 @@ namespace Backend.Biz
                             name = task.Name,
                             content = task.Content,
                             state = task.State,
-                            ownerId = task.OwnerId,
+                            executorId = task.OwnerId,
                             progressId = task.ProgressId,
                             comments = task.Comments.ToArray(),
                             files = task.Files.ToArray(),
@@ -276,7 +293,7 @@ namespace Backend.Biz
                     name = theTask.Name,
                     content = theTask.Content,
                     state = theTask.State,
-                    ownerId = theTask.OwnerId,
+                    executorId = theTask.OwnerId,
                     progressId = theTask.ProgressId,
                     comments = theTask.Comments.ToArray(),
                     files = theTask.Files.ToArray(),
@@ -737,13 +754,118 @@ namespace Backend.Biz
                 {
                     name = theTask.Name,
                     content = theTask.Content,
-                    ownerId = theTask.OwnerId,
+                    executorId = theTask.OwnerId,
                     ddl = theTask.Ddl,
                     emergencyType = theTask.EmergencyType,
                     state = theTask.State,
                     progressId = theTask.ProgressId
                 };
 
+                return Helper.BuildResult(data);
+            }
+        }
+
+        public static object AddAttachment(object json)
+        {
+            var body = Helper.Decode(json);
+            var fileId = int.Parse(body["fileId"]);
+            var taskId = int.Parse(body["taskId"]);
+            var userId = int.Parse(body["userId"]);
+
+            using (var context = new BackendContext())
+            {
+                var queryFile = context.File.Where(f => f.Id == fileId);
+                if (!queryFile.Any())
+                    return Helper.Error(404, "文件不存在");
+                var theFile = queryFile.Single();
+
+                var queryUser = context.Users.Where(user => user.Id == userId);
+                if (!queryUser.Any())
+                    return Helper.Error(404, "用户不存在");
+
+                var queryTask = context.Tasks.Where(task => task.Id == taskId);
+                if (!queryTask.Any())
+                    return Helper.Error(404, "任务不存在");
+
+                var theTask = queryTask.Single();
+                if (theTask.Progress.Project.Users.All(u => u.Id != userId))
+                    return Helper.Error(403, "用户不在该项目中");
+
+                if (!theTask.Progress.Project.Files.Contains(theFile))
+                    return Helper.Error(404, "文件不属于这个项目");
+
+                var flag = userId == queryTask.Single().OwnerId;
+
+                if (!Helper.CheckPermission(theTask.Progress.Project.Id, userId, flag, OperationType.PUT))
+                {
+                    return Helper.Error(401, "无权限");
+                }
+
+                theFile.Tasks.Add(theTask);
+                context.SaveChanges();
+
+
+                var data = (from file in theTask.Files
+                    select new
+                    {
+                        id = file.Id,
+                        name = file.Name,
+                        projectId = file.ProjectId,
+                        userId = file.UserId,
+                        uploadTime = file.UploadTime
+                    }).ToArray();
+                return Helper.BuildResult(data);
+            }
+        }
+
+        public static object DeleteAttachment(object json)
+        {
+            var body = Helper.Decode(json);
+            var fileId = int.Parse(body["fileId"]);
+            var taskId = int.Parse(body["taskId"]);
+            var userId = int.Parse(body["userId"]);
+
+            using (var context = new BackendContext())
+            {
+                var queryFile = context.File.Where(f => f.Id == fileId);
+                if (!queryFile.Any())
+                    return Helper.Error(404, "文件不存在");
+                var theFile = queryFile.Single();
+
+                var queryUser = context.Users.Where(user => user.Id == userId);
+                if (!queryUser.Any())
+                    return Helper.Error(404, "用户不存在");
+
+                var queryTask = context.Tasks.Where(task => task.Id == taskId);
+                if (!queryTask.Any())
+                    return Helper.Error(404, "任务不存在");
+
+                var theTask = queryTask.Single();
+                if (theTask.Progress.Project.Users.All(u => u.Id != userId))
+                    return Helper.Error(403, "用户不在该项目中");
+
+                if (!theTask.Files.Contains(theFile))
+                    return Helper.Error(404, "文件不属于这个任务");
+
+                var flag = userId == queryTask.Single().OwnerId;
+
+                if (!Helper.CheckPermission(theTask.Progress.Project.Id, userId, flag, OperationType.PUT))
+                {
+                    return Helper.Error(401, "无权限");
+                }
+
+                theFile.Tasks.Remove(theTask);
+                context.SaveChanges();
+
+                var data = (from file in theTask.Files
+                    select new
+                    {
+                        id = file.Id,
+                        name = file.Name,
+                        projectId = file.ProjectId,
+                        userId = file.UserId,
+                        uploadTime = file.UploadTime
+                    }).ToArray();
                 return Helper.BuildResult(data);
             }
         }
